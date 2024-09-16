@@ -2,8 +2,11 @@
 
 /**
  * @since       10.09.2024 - 19:52
+ *
  * @author      Patrick Froch <info@easySolutionsIT.de>
+ *
  * @see         http://easySolutionsIT.de
+ *
  * @copyright   e@sy Solutions IT 2024
  * @license     EULA
  */

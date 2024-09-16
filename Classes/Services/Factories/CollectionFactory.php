@@ -2,8 +2,11 @@
 
 /**
  * @since       05.09.2024 - 17:25
+ *
  * @author      Patrick Froch <info@easySolutionsIT.de>
+ *
  * @see         http://easySolutionsIT.de
+ *
  * @copyright   e@sy Solutions IT 2024
  * @license     EULA
  */
@@ -28,8 +31,8 @@ class CollectionFactory
      * @param DatabaseHelper $dbHelper
      */
     public function __construct(
-        private readonly LazyLoadHelper  $lazyLoadHelper,
-        private readonly DatabaseHelper  $dbHelper,
+        private readonly LazyLoadHelper $lazyLoadHelper,
+        private readonly DatabaseHelper $dbHelper,
         private readonly SerializeHelper $serialzeHelper
     ) {
         $this->lazyLoadHelper->setCollectionFactory($this);
@@ -54,7 +57,7 @@ class CollectionFactory
      * Erstellt eine DatabaseRowMap.
      *
      * @param TablenameValue $tablename
-     * @param array $data
+     * @param array          $data
      *
      * @return DatabaseRowCollection
      */
@@ -75,7 +78,7 @@ class CollectionFactory
      * Erzeugt eine ArrayMap mit einer DatabaseRowMap pro Tabellenzeile.
      *
      * @param TablenameValue $tablename
-     * @param array $data
+     * @param array          $data
      *
      * @return ArrayCollection
      */

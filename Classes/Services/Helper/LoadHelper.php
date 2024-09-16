@@ -2,8 +2,11 @@
 
 /**
  * @since       12.09.2024 - 17:25
+ *
  * @author      Patrick Froch <info@easySolutionsIT.de>
+ *
  * @see         http://easySolutionsIT.de
+ *
  * @copyright   e@sy Solutions IT 2024
  * @license     EULA
  */
@@ -31,7 +34,7 @@ class LoadHelper
 
 
     /**
-     * @param DatabaseHelper $dbHelper
+     * @param DatabaseHelper  $dbHelper
      * @param SerializeHelper $serializeHelper
      */
     public function __construct(
@@ -60,7 +63,7 @@ class LoadHelper
      *
      * @param TablenameValue $foreignTable
      * @param FieldnameValue $foreignField
-     * @param mixed $value
+     * @param mixed          $value
      *
      * @return DatabaseRowCollection|null
      *
@@ -86,7 +89,7 @@ class LoadHelper
      *
      * @param TablenameValue $foreignTable
      * @param FieldnameValue $foreignField
-     * @param string|array $value
+     * @param string|array   $value
      *
      * @return ArrayCollection|null
      *

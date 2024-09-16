@@ -1,10 +1,12 @@
 <?php
 
 /**
- * @package     datacollection
  * @since       28.08.2024 - 12:32
+ *
  * @author      Patrick Froch <info@easySolutionsIT.de>
+ *
  * @see         http://easySolutionsIT.de
+ *
  * @copyright   e@sy Solutions IT 2024
  * @license     EULA
  */
@@ -26,6 +28,7 @@ class Plugin implements BundlePluginInterface
 
     /**
      * @param ParserInterface $parser
+     *
      * @return array|ConfigInterface[]
      */
     public function getBundles(ParserInterface $parser)

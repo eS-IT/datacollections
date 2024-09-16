@@ -2,8 +2,11 @@
 
 /**
  * @since       12.09.2024 - 08:23
+ *
  * @author      Patrick Froch <info@easySolutionsIT.de>
+ *
  * @see         http://easySolutionsIT.de
+ *
  * @copyright   e@sy Solutions IT 2024
  * @license     EULA
  */
@@ -22,7 +25,7 @@ class ConfigurationHelper
 {
 
     /**
-     * @param DcaHelper $dcaHelper
+     * @param DcaHelper           $dcaHelper
      * @param DatabasenameFactory $nameFactory
      */
     public function __construct(

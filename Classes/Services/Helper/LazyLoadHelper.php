@@ -2,8 +2,11 @@
 
 /**
  * @since       10.09.2024 - 19:44
+ *
  * @author      Patrick Froch <info@easySolutionsIT.de>
+ *
  * @see         http://easySolutionsIT.de
+ *
  * @copyright   e@sy Solutions IT 2024
  * @license     EULA
  */
@@ -22,7 +25,7 @@ class LazyLoadHelper
 
     /**
      * @param ConfigurationHelper $configHelper
-     * @param LoadHelper $loadHelper
+     * @param LoadHelper          $loadHelper
      */
     public function __construct(
         private readonly ConfigurationHelper $configHelper,
@@ -50,7 +53,7 @@ class LazyLoadHelper
      *
      * @param TablenameValue $tablename
      * @param FieldnameValue $fieldname
-     * @param mixed $value
+     * @param mixed          $value
      *
      * @return mixed
      *

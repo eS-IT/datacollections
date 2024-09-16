@@ -2,8 +2,11 @@
 
 /**
  * @since       05.09.2024 - 17:31
+ *
  * @author      Patrick Froch <info@easySolutionsIT.de>
+ *
  * @see         http://easySolutionsIT.de
+ *
  * @copyright   e@sy Solutions IT 2024
  * @license     EULA
  */
@@ -40,19 +43,19 @@ class DatabaseRowCollection extends AbstractCollection
 
     /**
      * @param CollectionFactory $collectionFactory
-     * @param DatabaseHelper $databaseHelper
-     * @param SerializeHelper $serializeHelper
-     * @param LazyLoadHelper $loadHelper
-     * @param TablenameValue $tablename
-     * @param array $data
+     * @param DatabaseHelper    $databaseHelper
+     * @param SerializeHelper   $serializeHelper
+     * @param LazyLoadHelper    $loadHelper
+     * @param TablenameValue    $tablename
+     * @param array             $data
      */
     public function __construct(
         private readonly CollectionFactory $collectionFactory,
-        private readonly DatabaseHelper    $databaseHelper,
-        private readonly SerializeHelper   $serializeHelper,
-        private readonly LazyLoadHelper    $loadHelper,
-        private readonly TablenameValue    $tablename,
-        array                              $data = []
+        private readonly DatabaseHelper $databaseHelper,
+        private readonly SerializeHelper $serializeHelper,
+        private readonly LazyLoadHelper $loadHelper,
+        private readonly TablenameValue $tablename,
+        array $data = []
     ) {
         parent::__construct($this->collectionFactory, $this->serializeHelper, $data);
         $this->lazyData = $this->collectionFactory->createArrayCollection();
@@ -78,6 +81,7 @@ class DatabaseRowCollection extends AbstractCollection
      * werden diese Daten geladen und zurückgegeben.
      *
      * @param FieldnameValue $key
+     *
      * @return mixed
      *
      * @throws \Doctrine\DBAL\Exception
@@ -108,14 +112,14 @@ class DatabaseRowCollection extends AbstractCollection
      * Setzt einen Wert.
      *
      * @param FieldnameValue $key
-     * @param mixed $value
+     * @param mixed          $value
      *
      * @return void
      */
     public function setValue(FieldnameValue $key, mixed $value): void
     {
         if (false === \is_scalar($value) && false === \is_array($value)) {
-            throw new TypeNotAllowedException("value have be a scalar or array");
+            throw new TypeNotAllowedException('value have be a scalar or array');
         }
 
         if (true === $this->lazyData->contains($key->value())) {

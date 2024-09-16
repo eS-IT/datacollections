@@ -2,8 +2,11 @@
 
 /**
  * @since       05.09.2024 - 07:39
+ *
  * @author      Patrick Froch <info@easySolutionsIT.de>
+ *
  * @see         http://easySolutionsIT.de
+ *
  * @copyright   e@sy Solutions IT 2024
  * @license     EULA
  */
@@ -23,13 +26,13 @@ abstract class AbstractCollection extends ArrayCollection
 
     /**
      * @param CollectionFactory $collectionFactory
-     * @param SerializeHelper $serializeHelper
-     * @param array $data
+     * @param SerializeHelper   $serializeHelper
+     * @param array             $data
      */
     public function __construct(
         private readonly CollectionFactory $collectionFactory,
-        private readonly SerializeHelper   $serializeHelper,
-        array                              $data = []
+        private readonly SerializeHelper $serializeHelper,
+        array $data = []
     ) {
         parent::__construct($data);
     }
