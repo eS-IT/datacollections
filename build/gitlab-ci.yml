@@ -8,7 +8,7 @@ test_cto4.13_php8.1:
     image: projekt.easysolutionsit.de:5000/testsuite_cto4.13_php8.1:1.0.0
     variables:
         GIT_STRATEGY: none
-        PROJECT_NAME: <#project#>
+        PROJECT_NAME: datacollections
     before_script:
         - COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer.phar config repositories.$PROJECT_NAME vcs $PROJEKT_URL --working-dir=/htdocs/
         - COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer.phar require esit/$PROJECT_NAME:dev-$CI_COMMIT_REF_NAME --working-dir=/htdocs/
