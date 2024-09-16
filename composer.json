@@ -16,7 +16,6 @@
     },
     "require": {
         "php": "^8.2",
-        "ext-ds": "*",
         "contao/core-bundle": "^5.3",
         "esit/valueobjects": "^1.0",
         "esit/databaselayer": "^1.0"
