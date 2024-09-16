@@ -39,6 +39,26 @@ abstract class AbstractCollection extends ArrayCollection
 
 
     /**
+     * Gibt einen Wert zurück.
+     * Handelt es sich um ein (serialisiertes) Array, wird eine Collection zurückgegeben.
+     *
+     * @return \Esit\Datacollections\Classes\Library\Collections\ArrayCollection|false|mixed
+     */
+    public function current(): mixed
+    {
+        $value      = parent::current();
+        $converted  = $this->serializeHelper->unserialize($value);
+
+        if (true === \is_array($converted)) {
+            // Arrays immer umwandeln!
+            return $this->collectionFactory->createArrayCollection($converted);
+        }
+
+        return $value;
+    }
+
+
+    /**
      * Methode darf nicht von außen aufgerufen werden und kann wegen
      * der Vererbung nicht protected gemacht werden, deshalb darf sie
      * auf den Kindklassen nicht verwendet werden, es wäre sonst möglich
