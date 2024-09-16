@@ -1,11 +1,11 @@
 stages:
-    - test_cto4.13
+    - test_cto5.3
 
-test_cto4.13_php8.2:
-    stage: test_cto4.13
+test_cto5.3_php8.2:
+    stage: test_cto5.3
     except:
         - tags
-    image: projekt.easysolutionsit.de:5000/testsuite_cto4.13_php8.2:1.0.0
+    image: projekt.easysolutionsit.de:5000/testsuite_cto5.3_php8.2:1.0.0
     variables:
         GIT_STRATEGY: none
         PROJECT_NAME: datacollections
