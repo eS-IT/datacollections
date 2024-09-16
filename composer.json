@@ -1,0 +1,37 @@
+{
+    "name": "esit/datacollections",
+    "description": "Es handelt sich um eine Erweiterung für das Open Source CMS Contao",
+    "license": "proprietary",
+    "type": "contao-bundle",
+    "authors": [
+        {
+            "name": "Patrick Froch",
+            "email": "info@easySolutionsIT.de",
+            "homepage": "http://easySolutionsIT.de",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "email": "info@easySolutionsIT.de"
+    },
+    "require": {
+        "php": "^8.2",
+        "ext-ds": "*",
+        "contao/core-bundle": "^5.3",
+        "esit/valueobjects": "^1.0",
+        "esit/databaselayer": "^1.0"
+    },
+    "require-dev": {
+        "contao/test-case": "^5.3",
+        "phpunit/phpunit": "^9.5",
+        "roave/security-advisories": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Esit\\Datacollections\\": ""
+        }
+    },
+    "extra": {
+        "contao-manager-plugin": "Esit\\Datacollections\\Classes\\Contao\\Manager\\Plugin"
+    }
+}

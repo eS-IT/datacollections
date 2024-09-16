@@ -1,0 +1,25 @@
+# Services
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    # Factories
+    Esit\Datacollections\Classes\Services\Factories\CollectionFactory:
+        public: true
+
+    Esit\Datacollections\Classes\Services\Helper\ConfigurationHelper: ~
+
+    Esit\Datacollections\Classes\Services\Helper\DcaHelper: ~
+
+    Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper: ~
+
+    Esit\Datacollections\Classes\Services\Helper\LoadHelper: ~
+
+#    Esit\Datacollections\Classes\Services\ExampleHelper:
+#        arguments:
+#            - '%kernel.project_dir%'
+#            - '@database_connection'
+#            - '%env(PROJECT_ENV_VARIABLE)%'
+#            - '@request_stack'
+#            - '@contao.routing.scope_matcher'
