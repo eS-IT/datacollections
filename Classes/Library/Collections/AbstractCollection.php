@@ -18,7 +18,9 @@ namespace Esit\Datacollections\Classes\Library\Collections;
 use Doctrine\Common\Collections\ArrayCollection;
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Exceptions\MethodNotAllowedException;
+use Esit\Datacollections\Classes\Library\Iterator\CollectionIerrator;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
+use Traversable;
 
 abstract class AbstractCollection extends ArrayCollection
 {
@@ -133,5 +135,14 @@ abstract class AbstractCollection extends ArrayCollection
         $value = $this->serializeHelper->serialize($value);
 
         parent::set($key, $value);
+    }
+
+
+    /**
+     * @return Traversable
+     */
+    public function getIterator(): Traversable
+    {
+        return new CollectionIerrator($this->toArray(), 0, $this->serializeHelper, $this->collectionFactory);
     }
 }
