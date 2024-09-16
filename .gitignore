@@ -9,6 +9,7 @@
 # version     1.0.0
 # since       05.01.19 - 16:54
 
+composer.lock
 *.cache
 autoload*
 vendor/
