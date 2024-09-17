@@ -61,7 +61,9 @@ class ConverterHelperTest extends TestCase
                                            ->disableOriginalConstructor()
                                            ->getMock();
 
-        $this->helper               = new ConverterHelper($this->serializeHelper, $this->collectionFactory);
+        $this->helper               = new ConverterHelper($this->serializeHelper);
+        
+        $this->helper->setCollectionFactory($this->collectionFactory);
     }
 
 

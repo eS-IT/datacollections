@@ -42,6 +42,7 @@ class CollectionFactory
         private readonly ConverterHelper $converterHelper
     ) {
         $this->lazyLoadHelper->setCollectionFactory($this);
+        $this->converterHelper->setCollectionFactory($this);
     }
 
 

@@ -16,17 +16,31 @@ declare(strict_types=1);
 namespace Esit\Datacollections\Classes\Services\Helper;
 
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
-use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 
 class ConverterHelper
 {
 
+    private CollectionFactory $collectionFactory;
+
 
     public function __construct(
-        private readonly SerializeHelper $serializeHelper,
-        private readonly CollectionFactory $collectionFactory
+        private readonly SerializeHelper $serializeHelper
     ) {
+    }
+
+
+    /**
+     * Setzt die CollectionFactory.
+     * Kann wegen Ringbezug nicht injected werden.s
+     *
+     * @param CollectionFactory $collectionFactory
+     *
+     * @return void
+     */
+    public function setCollectionFactory(CollectionFactory $collectionFactory): void
+    {
+        $this->collectionFactory = $collectionFactory;
     }
 
 
