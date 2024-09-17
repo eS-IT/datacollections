@@ -63,13 +63,15 @@ class CollectionFactory
     /**
      * Erstellt eine DatabaseRowMap.
      *
-     * @param TablenameValue $tablename
-     * @param array          $data
+     * @param TablenameValue        $tablename
+     * @param array|ArrayCollection $data
      *
      * @return DatabaseRowCollection
      */
-    public function createDatabaseRowCollection(TablenameValue $tablename, array $data = []): DatabaseRowCollection
-    {
+    public function createDatabaseRowCollection(
+        TablenameValue $tablename,
+        array|ArrayCollection $data = []
+    ): DatabaseRowCollection {
         return new DatabaseRowCollection(
             $this,
             $this->serializeHelper,

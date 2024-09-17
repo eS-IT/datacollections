@@ -62,7 +62,7 @@ class ConverterHelperTest extends TestCase
                                            ->getMock();
 
         $this->helper               = new ConverterHelper($this->serializeHelper);
-        
+
         $this->helper->setCollectionFactory($this->collectionFactory);
     }
 

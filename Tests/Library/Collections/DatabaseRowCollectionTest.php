@@ -210,13 +210,6 @@ class DatabaseRowCollectionTest extends EsitTestCase
 
     //todo add more tests für getValue()!
 
-    public function testSetValueThrowExceptionIfValueIsNotScalar(): void
-    {
-        $this->expectException(TypeNotAllowedException::class);
-        $this->expectExceptionMessage('value have be a scalar or array');
-        $this->collection->setValue($this->fieldname, $this->tablename);
-    }
-
 
     public function testSetValueRemoveLazyLoadedValueIsIsSet(): void
     {

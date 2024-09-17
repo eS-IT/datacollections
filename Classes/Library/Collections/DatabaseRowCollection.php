@@ -17,7 +17,6 @@ namespace Esit\Datacollections\Classes\Library\Collections;
 
 use Esit\Databaselayer\Classes\Services\Helper\DatabaseHelper;
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
-use Esit\Datacollections\Classes\Exceptions\TypeNotAllowedException;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
@@ -43,12 +42,13 @@ class DatabaseRowCollection extends AbstractCollection
 
 
     /**
-     * @param CollectionFactory $collectionFactory
-     * @param DatabaseHelper    $databaseHelper
-     * @param SerializeHelper   $serializeHelper
-     * @param LazyLoadHelper    $loadHelper
-     * @param TablenameValue    $tablename
-     * @param array             $data
+     * @param CollectionFactory     $collectionFactory
+     * @param SerializeHelper       $serializeHelper
+     * @param ConverterHelper       $converterHelper
+     * @param DatabaseHelper        $databaseHelper
+     * @param LazyLoadHelper        $loadHelper
+     * @param TablenameValue        $tablename
+     * @param array|ArrayCollection $data
      */
     public function __construct(
         private readonly CollectionFactory $collectionFactory,
@@ -57,8 +57,9 @@ class DatabaseRowCollection extends AbstractCollection
         private readonly DatabaseHelper $databaseHelper,
         private readonly LazyLoadHelper $loadHelper,
         private readonly TablenameValue $tablename,
-        array $data = []
+        array|ArrayCollection $data = []
     ) {
+        $data = $data instanceof ArrayCollection ? $data->toArray() : $data;
         parent::__construct(
             $this->collectionFactory,
             $this->serializeHelper,
@@ -67,6 +68,15 @@ class DatabaseRowCollection extends AbstractCollection
         );
 
         $this->lazyData = $this->collectionFactory->createArrayCollection();
+    }
+
+
+    /**
+     * @return TablenameValue
+     */
+    public function gteTable(): TablenameValue
+    {
+        return $this->tablename;
     }
 
 
@@ -126,9 +136,7 @@ class DatabaseRowCollection extends AbstractCollection
      */
     public function setValue(FieldnameValue $key, mixed $value): void
     {
-        if (false === \is_scalar($value) && false === \is_array($value)) {
-            throw new TypeNotAllowedException('value have be a scalar or array');
-        }
+        $value = $value instanceof ArrayCollection ? $value->toArray() : $value;
 
         if (true === $this->lazyData->contains($key->value())) {
             // Nachgeladene Daten entfernen, wenn der Wert neu gesetzt wird!
