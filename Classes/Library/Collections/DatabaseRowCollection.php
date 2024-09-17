@@ -20,6 +20,7 @@ use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Exceptions\TypeNotAllowedException;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
+use Esit\Datacollections\Tests\Services\Helper\ConverterHelper;
 use Esit\Valueobjects\Classes\Database\Valueobjects\FieldnameValue;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
 
@@ -51,13 +52,20 @@ class DatabaseRowCollection extends AbstractCollection
      */
     public function __construct(
         private readonly CollectionFactory $collectionFactory,
-        private readonly DatabaseHelper $databaseHelper,
         private readonly SerializeHelper $serializeHelper,
+        private readonly ConverterHelper $converterHelper,
+        private readonly DatabaseHelper $databaseHelper,
         private readonly LazyLoadHelper $loadHelper,
         private readonly TablenameValue $tablename,
         array $data = []
     ) {
-        parent::__construct($this->collectionFactory, $this->serializeHelper, $data);
+        parent::__construct(
+            $this->collectionFactory,
+            $this->serializeHelper,
+            $this->converterHelper,
+            $data
+        );
+
         $this->lazyData = $this->collectionFactory->createArrayCollection();
     }
 

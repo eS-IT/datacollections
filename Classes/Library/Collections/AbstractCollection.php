@@ -18,8 +18,8 @@ namespace Esit\Datacollections\Classes\Library\Collections;
 use Doctrine\Common\Collections\ArrayCollection;
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Exceptions\MethodNotAllowedException;
-use Esit\Datacollections\Classes\Library\Iterator\CollectionIerrator;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
+use Esit\Datacollections\Tests\Services\Helper\ConverterHelper;
 use Traversable;
 
 abstract class AbstractCollection extends ArrayCollection
@@ -28,12 +28,14 @@ abstract class AbstractCollection extends ArrayCollection
 
     /**
      * @param CollectionFactory $collectionFactory
-     * @param SerializeHelper   $serializeHelper
-     * @param array             $data
+     * @param SerializeHelper $serializeHelper
+     * @param ConverterHelper $converterHelper
+     * @param array $data
      */
     public function __construct(
         private readonly CollectionFactory $collectionFactory,
         private readonly SerializeHelper $serializeHelper,
+        private readonly ConverterHelper $converterHelper,
         array $data = []
     ) {
         parent::__construct($data);
@@ -48,15 +50,7 @@ abstract class AbstractCollection extends ArrayCollection
      */
     public function current(): mixed
     {
-        $value      = parent::current();
-        $converted  = $this->serializeHelper->unserialize($value);
-
-        if (true === \is_array($converted)) {
-            // Arrays immer umwandeln!
-            return $this->collectionFactory->createArrayCollection($converted);
-        }
-
-        return $value;
+        return $this->converterHelper->convertArrayToCollection(parent::current());
     }
 
 
@@ -109,15 +103,7 @@ abstract class AbstractCollection extends ArrayCollection
      */
     protected function returnValue(mixed $key): mixed
     {
-        $value      = parent::get($key);
-        $converted  = $this->serializeHelper->unserialize($value);
-
-        if (true === \is_array($converted)) {
-            // Arrays immer umwandeln!
-            return $this->collectionFactory->createArrayCollection($converted);
-        }
-
-        return $value;
+        return $this->converterHelper->convertArrayToCollection(parent::get($key));
     }
 
 
@@ -139,10 +125,12 @@ abstract class AbstractCollection extends ArrayCollection
 
 
     /**
+     * Gibt einen ITerator für das aktuelle Objekt zurück.
+     *
      * @return Traversable
      */
     public function getIterator(): Traversable
     {
-        return new CollectionIerrator($this->toArray(), 0, $this->serializeHelper, $this->collectionFactory);
+        return $this->collectionFactory->createCollectionIterator($this);
     }
 }

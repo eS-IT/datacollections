@@ -18,6 +18,7 @@ use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
+use Esit\Datacollections\Tests\Services\Helper\ConverterHelper;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -42,6 +43,8 @@ class CollectionFactoryTest extends TestCase
      * @var (SerializeHelper&MockObject)|MockObject
      */
     private $serialzeHelper;
+
+    private $converterHelper;
 
 
     /**
@@ -81,6 +84,10 @@ class CollectionFactoryTest extends TestCase
                                        ->disableOriginalConstructor()
                                        ->getMock();
 
+        $this->converterHelper  = $this->getMockBuilder(ConverterHelper::class)
+                                       ->disableOriginalConstructor()
+                                       ->getMock();
+
         $this->arrayCollection  = $this->getMockBuilder(ArrayCollection::class)
                                        ->disableOriginalConstructor()
                                        ->getMock();
@@ -93,7 +100,12 @@ class CollectionFactoryTest extends TestCase
                                        ->disableOriginalConstructor()
                                        ->getMock();
 
-        $this->factory          = new CollectionFactory($this->lazyLoadHelper, $this->dbHelper, $this->serialzeHelper);
+        $this->factory          = new CollectionFactory(
+            $this->lazyLoadHelper,
+            $this->dbHelper,
+            $this->serialzeHelper,
+            $this->converterHelper
+        );
     }
 
     public function testCreateArrayCollection(): void
@@ -123,4 +135,17 @@ class CollectionFactoryTest extends TestCase
 
         $this->assertSame(2, $rtn->count());
     }
+
+    public function testCreateCollectionIterator(): void
+    {
+        $data = ['test' => 'Array'];
+
+        $this->arrayCollection->expects(self::once())
+                              ->method('toArray')
+                              ->willReturn($data);
+
+        $this->assertNotNull($this->factory->createCollectionIterator($this->arrayCollection));
+    }
+
+
 }

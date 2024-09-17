@@ -20,6 +20,7 @@ use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
 use Esit\Datacollections\EsitTestCase;
+use Esit\Datacollections\Tests\Services\Helper\ConverterHelper;
 use Esit\Valueobjects\Classes\Database\Valueobjects\FieldnameValue;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -49,6 +50,9 @@ class DatabaseRowCollectionTest extends EsitTestCase
      * @var (SerializeHelper&MockObject)|MockObject
      */
     private $serializeHelper;
+
+
+    private $convterHelper;
 
 
     /**
@@ -93,6 +97,10 @@ class DatabaseRowCollectionTest extends EsitTestCase
                                            ->disableOriginalConstructor()
                                            ->getMock();
 
+        $this->convterHelper        = $this->getMockBuilder(ConverterHelper::class)
+                                           ->disableOriginalConstructor()
+                                           ->getMock();
+
         $this->loadHelper           = $this->getMockBuilder(LazyLoadHelper::class)
                                            ->disableOriginalConstructor()
                                            ->getMock();
@@ -110,8 +118,9 @@ class DatabaseRowCollectionTest extends EsitTestCase
 
         $this->collection           = new DatabaseRowCollection(
             $this->collectionFactory,
-            $this->databaseHelper,
             $this->serializeHelper,
+            $this->convterHelper,
+            $this->databaseHelper,
             $this->loadHelper,
             $this->tablename
         );

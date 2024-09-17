@@ -17,9 +17,12 @@ namespace Esit\Datacollections\Classes\Services\Factories;
 
 use Esit\Databaselayer\Classes\Services\Helper\DatabaseHelper;
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
+use Esit\Datacollections\Classes\Library\Collections\AbstractCollection;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
+use Esit\Datacollections\Classes\Library\Iterator\CollectionIerrator;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
+use Esit\Datacollections\Tests\Services\Helper\ConverterHelper;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
 
 class CollectionFactory
@@ -29,11 +32,14 @@ class CollectionFactory
     /**
      * @param LazyLoadHelper $lazyLoadHelper
      * @param DatabaseHelper $dbHelper
+     * @param SerializeHelper $serializeHelper
+     * @param ConverterHelper $converterHelper
      */
     public function __construct(
         private readonly LazyLoadHelper $lazyLoadHelper,
         private readonly DatabaseHelper $dbHelper,
-        private readonly SerializeHelper $serialzeHelper
+        private readonly SerializeHelper $serializeHelper,
+        private readonly ConverterHelper $converterHelper
     ) {
         $this->lazyLoadHelper->setCollectionFactory($this);
     }
@@ -49,7 +55,7 @@ class CollectionFactory
      */
     public function createArrayCollection(array $data = []): ArrayCollection
     {
-        return new ArrayCollection($this, $this->serialzeHelper, $data);
+        return new ArrayCollection($this, $this->serializeHelper, $this->converterHelper, $data);
     }
 
 
@@ -65,8 +71,9 @@ class CollectionFactory
     {
         return new DatabaseRowCollection(
             $this,
+            $this->serializeHelper,
+            $this->converterHelper,
             $this->dbHelper,
-            $this->serialzeHelper,
             $this->lazyLoadHelper,
             $tablename,
             $data
@@ -93,5 +100,18 @@ class CollectionFactory
         }
 
         return $multiData;
+    }
+
+
+    /**
+     * Erzeugt einen CollectionIterator.
+     *
+     * @param AbstractCollection $collection
+     *
+     * @return CollectionIerrator
+     */
+    public function createCollectionIterator(AbstractCollection $collection): CollectionIerrator
+    {
+        return new CollectionIerrator($collection->toArray(), 0, $this->serializeHelper, $this);
     }
 }
