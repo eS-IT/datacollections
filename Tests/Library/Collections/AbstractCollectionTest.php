@@ -17,7 +17,7 @@ use Esit\Datacollections\Classes\Exceptions\MethodNotAllowedException;
 use Esit\Datacollections\Classes\Library\Collections\AbstractCollection;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
-use Esit\Datacollections\Tests\Services\Helper\ConverterHelper;
+use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

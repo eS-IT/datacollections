@@ -21,8 +21,8 @@ use Esit\Datacollections\Classes\Library\Collections\AbstractCollection;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
 use Esit\Datacollections\Classes\Library\Iterator\CollectionIerrator;
+use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
-use Esit\Datacollections\Tests\Services\Helper\ConverterHelper;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
 
 class CollectionFactory
@@ -30,8 +30,8 @@ class CollectionFactory
 
 
     /**
-     * @param LazyLoadHelper $lazyLoadHelper
-     * @param DatabaseHelper $dbHelper
+     * @param LazyLoadHelper  $lazyLoadHelper
+     * @param DatabaseHelper  $dbHelper
      * @param SerializeHelper $serializeHelper
      * @param ConverterHelper $converterHelper
      */
@@ -112,6 +112,6 @@ class CollectionFactory
      */
     public function createCollectionIterator(AbstractCollection $collection): CollectionIerrator
     {
-        return new CollectionIerrator($collection->toArray(), 0, $this->serializeHelper, $this);
+        return new CollectionIerrator($collection->toArray(), 0, $this->converterHelper);
     }
 }

@@ -19,8 +19,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Exceptions\MethodNotAllowedException;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
-use Esit\Datacollections\Tests\Services\Helper\ConverterHelper;
-use Traversable;
+use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 
 abstract class AbstractCollection extends ArrayCollection
 {
@@ -28,9 +27,9 @@ abstract class AbstractCollection extends ArrayCollection
 
     /**
      * @param CollectionFactory $collectionFactory
-     * @param SerializeHelper $serializeHelper
-     * @param ConverterHelper $converterHelper
-     * @param array $data
+     * @param SerializeHelper   $serializeHelper
+     * @param ConverterHelper   $converterHelper
+     * @param array             $data
      */
     public function __construct(
         private readonly CollectionFactory $collectionFactory,
@@ -91,6 +90,17 @@ abstract class AbstractCollection extends ArrayCollection
     }
 
 
+    /**
+     * Gibt einen Iterator für das aktuelle Objekt zurück.
+     *
+     * @return \Traversable
+     */
+    public function getIterator(): \Traversable
+    {
+        return $this->collectionFactory->createCollectionIterator($this);
+    }
+
+
 
     /**
      * Gibt einen Wert zurück.
@@ -121,16 +131,5 @@ abstract class AbstractCollection extends ArrayCollection
         $value = $this->serializeHelper->serialize($value);
 
         parent::set($key, $value);
-    }
-
-
-    /**
-     * Gibt einen ITerator für das aktuelle Objekt zurück.
-     *
-     * @return Traversable
-     */
-    public function getIterator(): Traversable
-    {
-        return $this->collectionFactory->createCollectionIterator($this);
     }
 }

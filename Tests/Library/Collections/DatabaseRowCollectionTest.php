@@ -18,9 +18,9 @@ use Esit\Datacollections\Classes\Exceptions\TypeNotAllowedException;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
+use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
 use Esit\Datacollections\EsitTestCase;
-use Esit\Datacollections\Tests\Services\Helper\ConverterHelper;
 use Esit\Valueobjects\Classes\Database\Valueobjects\FieldnameValue;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -52,6 +52,9 @@ class DatabaseRowCollectionTest extends EsitTestCase
     private $serializeHelper;
 
 
+    /**
+     * @var (ConverterHelper&MockObject)|MockObject
+     */
     private $convterHelper;
 
 
@@ -205,7 +208,7 @@ class DatabaseRowCollectionTest extends EsitTestCase
         $this->collection->getValue($this->fieldname);
     }
 
-    //todo add more tests fpr getValue()!
+    //todo add more tests für getValue()!
 
     public function testSetValueThrowExceptionIfValueIsNotScalar(): void
     {

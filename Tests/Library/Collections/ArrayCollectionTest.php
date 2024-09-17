@@ -14,8 +14,9 @@ namespace Esit\Datacollections\Tests\Library\Collections;
 
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
+use Esit\Datacollections\Classes\Library\Iterator\CollectionIerrator;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
-use Esit\Datacollections\Tests\Services\Helper\ConverterHelper;
+use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -34,6 +35,10 @@ class ArrayCollectionTest extends TestCase
      */
     private $serializeHelper;
 
+
+    /**
+     * @var (ConverterHelper&MockObject)|MockObject
+     */
     private $converterHelper;
 
 
@@ -64,11 +69,20 @@ class ArrayCollectionTest extends TestCase
         );
     }
 
+
     public function testGetValue(): void
     {
-        self::markTestIncomplete('Muss angepasst werden');
-        $key    = 'test';
-        $data   = [12, 34, 'TestValue'];
+        $key        = 'test';
+        $data       = [12, 34, 'TestValue'];
+
+        $collection = $this->getMockBuilder(ArrayCollection::class)
+                           ->disableOriginalConstructor()
+                           ->getMock();
+
+        $this->converterHelper->expects(self::once())
+                              ->method('convertArrayToCollection')
+                              ->with(\serialize($data))
+                              ->willReturn($collection);
 
         $this->serializeHelper->expects(self::once())
                               ->method('serialize')
@@ -77,7 +91,40 @@ class ArrayCollectionTest extends TestCase
 
         $this->collection->setValue($key, $data);
 
-        // $data ist hier serialisiert, da die Methoden aus AbstractCollection nicht mit gestest werden!
-        $this->assertSame(\serialize($data), $this->collection->getValue($key));
+        $this->assertSame($collection, $this->collection->getValue($key));
+    }
+
+
+    public function testgetIterator(): void
+    {
+        $iterator = $this->getMockBuilder(CollectionIerrator::class)
+                         ->disableOriginalConstructor()
+                         ->getMock();
+
+        $this->collectionFactory->expects(self::once())
+                                ->method('createCollectionIterator')
+                                ->with($this->collection)
+                                ->willReturn($iterator);
+
+        $this->assertSame($iterator, $this->collection->getIterator());
+    }
+
+
+    public function testCurrent(): void
+    {
+        $key        = 'test';
+        $data       = [12, 34, 'TestValue'];
+
+        $collection = $this->getMockBuilder(ArrayCollection::class)
+                           ->disableOriginalConstructor()
+                           ->getMock();
+
+        $this->converterHelper->expects(self::once())
+                              ->method('convertArrayToCollection')
+                              ->willReturn($collection);
+
+        $this->collection->setValue($key, $data);
+
+        $this->assertSame($collection, $this->collection->current());
     }
 }

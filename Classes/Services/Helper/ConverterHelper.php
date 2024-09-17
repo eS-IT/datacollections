@@ -2,15 +2,18 @@
 
 /**
  * @since       17.09.2024 - 07:09
+ *
  * @author      Patrick Froch <info@easySolutionsIT.de>
+ *
  * @see         http://easySolutionsIT.de
+ *
  * @copyright   e@sy Solutions IT 2024
  * @license     EULA
  */
 
 declare(strict_types=1);
 
-namespace Esit\Datacollections\Tests\Services\Helper;
+namespace Esit\Datacollections\Classes\Services\Helper;
 
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
@@ -33,11 +36,11 @@ class ConverterHelper
      *
      * @param mixed $value
      *
-     * @return ArrayCollection
+     * @return mixed
      */
-    public function convertArrayToCollection(mixed $value): ArrayCollection
+    public function convertArrayToCollection(mixed $value): mixed
     {
-        $converted  = $this->serializeHelper->unserialize($value);
+        $converted = $this->serializeHelper->unserialize($value);
 
         if (true === \is_array($converted)) {
             // Arrays immer umwandeln!

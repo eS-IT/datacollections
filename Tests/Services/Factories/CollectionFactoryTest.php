@@ -17,8 +17,8 @@ use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
+use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
-use Esit\Datacollections\Tests\Services\Helper\ConverterHelper;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -44,6 +44,10 @@ class CollectionFactoryTest extends TestCase
      */
     private $serialzeHelper;
 
+
+    /**
+     * @var (ConverterHelper&MockObject)|MockObject
+     */
     private $converterHelper;
 
 
@@ -57,11 +61,6 @@ class CollectionFactoryTest extends TestCase
      * @var (TablenameValue&MockObject)|MockObject
      */
     private $tablename;
-
-    /**
-     * @var (DatabaseRowCollection&MockObject)|MockObject
-     */
-    private $rowCollection;
 
 
     /**
