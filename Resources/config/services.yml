@@ -8,7 +8,10 @@ services:
     Esit\Datacollections\Classes\Services\Factories\CollectionFactory:
         public: true
 
+    # Helper
     Esit\Datacollections\Classes\Services\Helper\ConfigurationHelper: ~
+
+    Esit\Datacollections\Classes\Services\Helper\ConverterHelper: ~
 
     Esit\Datacollections\Classes\Services\Helper\DcaHelper: ~
 
