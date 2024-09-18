@@ -42,6 +42,18 @@ abstract class AbstractCollection extends ArrayCollection
 
 
     /**
+     * Wrapper für $this->toArray()
+     * (Wird für Kompatibilität mit dem FePackage benötigt!)
+     *
+     * @return array
+     */
+    public function fetchData(): array
+    {
+        return $this->toArray();
+    }
+
+
+    /**
      * Gibt einen Wert zurück.
      * Handelt es sich um ein (serialisiertes) Array, wird eine Collection zurückgegeben.
      *
