@@ -23,7 +23,7 @@ use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
 use Esit\Valueobjects\Classes\Database\Valueobjects\FieldnameValue;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
 
-class DatabaseRowCollection extends AbstractCollection
+class DatabaseRowCollection extends AbstractCollection implements CollectionInterface
 {
 
 

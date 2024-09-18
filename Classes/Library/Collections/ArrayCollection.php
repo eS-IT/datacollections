@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace Esit\Datacollections\Classes\Library\Collections;
 
-class ArrayCollection extends AbstractCollection
+class ArrayCollection extends AbstractCollection implements CollectionInterface
 {
 
 
