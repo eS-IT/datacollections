@@ -134,7 +134,7 @@ class CollectionDatabaseHelper
         ?FieldnamesInterface $searchField = null
     ): ?ArrayCollection {
         $tablename          = $this->dnNameFactory->createTablenameFromString($table->name);
-        $orderFieldname     = null !== $orderField ? $orderField->name : '';
+        $orderFieldname     = $orderField->name;
         $searchFieldname    = null !== $searchField ? $searchField->name : 'id';
         $data               = $this->dbHelepr->loadByList(
             $valueList,
@@ -175,7 +175,7 @@ class CollectionDatabaseHelper
         int $limit = 0
     ): ?ArrayCollection {
         $tablename      = $this->dnNameFactory->createTablenameFromString($table->name);
-        $orderFieldname = null !== $orderField ? $orderField->name : '';
+            $orderFieldname = null !== $orderField ? $orderField->name : '';
         $data           = $this->dbHelepr->loadAll($table->name, $orderFieldname, $order, $offset, $limit);
 
         if (!empty($data)) {

@@ -92,6 +92,12 @@ class AbstractCollectionTest extends TestCase
     }
 
 
+    public function testFetchData(): void
+    {
+        $this->assertEmpty($this->collection->fetchData());
+    }
+
+
     /**
      * @return void
      * @throws \Exception
@@ -111,57 +117,5 @@ class AbstractCollectionTest extends TestCase
         $this->expectException(MethodNotAllowedException::class);
         $this->expectExceptionMessage($msg);
         $this->collection->get('test');
-    }
-
-
-    public function testReturnValueHandleArray(): void
-    {
-        self::markTestIncomplete('Muss angepasst werden');
-        $key    = 'test';
-        $value  = ['key' => 'value'];
-
-        $this->serializeHelper->expects(self::once())
-                              ->method('unserialize')
-                              ->with(\serialize($value))
-                              ->willReturn($value);
-
-        $this->serializeHelper->expects(self::once())
-                              ->method('serialize')
-                              ->with($value)
-                              ->willReturn(\serialize($value));
-
-        $this->collectionFactory->expects(self::once())
-                                ->method('createArrayCollection')
-                                ->with($value)
-                                ->willReturn($this->arrayCollection);
-
-        $this->collection->handleValue($key, $value);
-
-        $this->collection->returnValue($key);
-    }
-
-
-    public function testReturnValueHandleScalarValue(): void
-    {
-        self::markTestIncomplete('Muss angepasst werden');
-        $key    = 'test';
-        $value  = 'value';
-
-        $this->serializeHelper->expects(self::once())
-                              ->method('unserialize')
-                              ->with($value)
-                              ->willReturn($value);
-
-        $this->serializeHelper->expects(self::once())
-                              ->method('serialize')
-                              ->with($value)
-                              ->willReturn($value);
-
-        $this->collectionFactory->expects(self::never())
-                                ->method('createArrayCollection');
-
-        $this->collection->handleValue($key, $value);
-
-        $this->collection->returnValue($key);
     }
 }
