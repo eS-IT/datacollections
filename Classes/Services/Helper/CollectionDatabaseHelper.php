@@ -27,13 +27,13 @@ class CollectionDatabaseHelper
 
     /**
      * @param DatabaseHelper $dbHelepr
-     * @param DatabasenameFactory $dnNameFactory
+     * @param DatabasenameFactory $dbNameFactory
      * @param CollectionFactory $collectionFactory
      */
     public function __construct(
-        private readonly DatabaseHelper $dbHelepr,
-        private readonly DatabasenameFactory $dnNameFactory,
-        private readonly CollectionFactory $collectionFactory,
+        private readonly DatabaseHelper      $dbHelepr,
+        private readonly DatabasenameFactory $dbNameFactory,
+        private readonly CollectionFactory   $collectionFactory,
     ) {
     }
 
@@ -67,8 +67,9 @@ class CollectionDatabaseHelper
         int                 $offset = 0,
         int                 $limit = 0
     ): ?DatabaseRowCollection {
-        $tablename  = $this->dnNameFactory->createTablenameFromString($table->name);
-        $data       = $this->dbHelepr->loadByValue($value, $field->name, $table->name, $offset, $limit);
+        $tablename  = $this->dbNameFactory->createTablenameFromString($table->name);
+        $fieldname  = $this->dbNameFactory->createFieldnameFromString($field->name, $tablename);
+        $data       = $this->dbHelepr->loadByValue($value, $fieldname->value(), $tablename->value(), $offset, $limit);
 
         if (!empty($data)) {
             return null;
@@ -98,10 +99,11 @@ class CollectionDatabaseHelper
         int                 $offset = 0,
         int                 $limit = 0
     ): ?ArrayCollection {
-        $tablename  = $this->dnNameFactory->createTablenameFromString($table->name);
-        $data       = $this->dbHelepr->loadByValue($value, $field->name, $table->name, $offset, $limit);
+        $tablename  = $this->dbNameFactory->createTablenameFromString($table->name);
+        $fieldname  = $this->dbNameFactory->createFieldnameFromString($field->name, $tablename);
+        $data       = $this->dbHelepr->loadByValue($value, $fieldname->value(), $tablename->value(), $offset, $limit);
 
-        if (!empty($data)) {
+        if (empty($data)) {
             return null;
         }
 
@@ -133,17 +135,18 @@ class CollectionDatabaseHelper
         int $limit = 0,
         ?FieldnamesInterface $searchField = null
     ): ?ArrayCollection {
-        $tablename          = $this->dnNameFactory->createTablenameFromString($table->name);
-        $orderFieldname     = $orderField->name;
-        $searchFieldname    = null !== $searchField ? $searchField->name : 'id';
+        $tablename          = $this->dbNameFactory->createTablenameFromString($table->name);
+        $orderFieldname     = $this->dbNameFactory->createFieldnameFromString($orderField->name, $tablename);
+        $searchFieldString  = null !== $searchField ? $searchField->name : 'id';
+        $searchFieldname    = $this->dbNameFactory->createFieldnameFromString($searchFieldString, $tablename);
         $data               = $this->dbHelepr->loadByList(
             $valueList,
-            $table->name,
-            $orderFieldname,
+            $tablename->value(),
+            $orderFieldname->value(),
             $order,
             $offset,
             $limit,
-            $searchFieldname
+            $searchFieldname->value()
         );
 
         if (!empty($data)) {
@@ -174,9 +177,14 @@ class CollectionDatabaseHelper
         int $offset = 0,
         int $limit = 0
     ): ?ArrayCollection {
-        $tablename      = $this->dnNameFactory->createTablenameFromString($table->name);
-            $orderFieldname = null !== $orderField ? $orderField->name : '';
-        $data           = $this->dbHelepr->loadAll($table->name, $orderFieldname, $order, $offset, $limit);
+        $tablename      = $this->dbNameFactory->createTablenameFromString($table->name);
+        $orderFieldname = null;
+
+        if (null !== $orderField) {
+            $orderFieldname = $this->dbNameFactory->createFieldnameFromString($orderField->name, $tablename);
+        }
+
+        $data = $this->dbHelepr->loadAll($table->name, $orderFieldname?->value() ?: '', $order, $offset, $limit);
 
         if (!empty($data)) {
             return null;

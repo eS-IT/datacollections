@@ -74,7 +74,7 @@ class DatabaseRowCollection extends AbstractCollection implements CollectionInte
     /**
      * @return TablenameValue
      */
-    public function gteTable(): TablenameValue
+    public function getTable(): TablenameValue
     {
         return $this->tablename;
     }

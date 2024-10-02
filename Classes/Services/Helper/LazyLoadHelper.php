@@ -55,11 +55,15 @@ class LazyLoadHelper
      * @param FieldnameValue $fieldname
      * @param mixed          $value
      *
-     * @return mixed
+     * @return \Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection
+     *        |\Esit\Datacollections\Classes\Library\Collections\ArrayCollection
+     *        |null
      *
      * @throws \Doctrine\DBAL\Exception
      */
-    public function loadData(TablenameValue $tablename, FieldnameValue $fieldname, int|string|array $value): mixed
+    public function loadData(TablenameValue $tablename, FieldnameValue $fieldname, int|string|array $value):
+     \Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection
+    |\Esit\Datacollections\Classes\Library\Collections\ArrayCollection|null
     {
         if (true === $this->configHelper->isLazyLodingField($tablename, $fieldname)) {
             $foreignTable = $this->configHelper->getForeignTable($tablename, $fieldname);

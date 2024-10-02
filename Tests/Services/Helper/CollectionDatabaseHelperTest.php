@@ -132,6 +132,10 @@ class CollectionDatabaseHelperTest extends TestCase
     }
 
 
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function testLoadOneByValueReturnNullIfNoDataFound(): void
     {
         $value  = 'test';
@@ -144,15 +148,29 @@ class CollectionDatabaseHelperTest extends TestCase
                             ->with(Tablenames::tl_testtabse->name)
                             ->willReturn($this->tablename);
 
+        $this->dbNameFactory->expects(self::once())
+                            ->method('createFieldnameFromString')
+                            ->with(Fieldnames::id->name, $this->tablename)
+                            ->willReturn($this->fieldname);
+
+        $this->fieldname->expects(self::once())
+                        ->method('value')
+                        ->willReturn(Fieldnames::id->name);
+
+        $this->tablename->expects(self::once())
+                        ->method('value')
+                        ->willReturn(Tablenames::tl_testtabse->name);
+
         $this->dbHelepr->expects(self::once())
                        ->method('loadByValue')
                        ->with($value, Fieldnames::id->name, Tablenames::tl_testtabse->name, $offset, $limit)
                        ->willReturn($data);
 
         $this->collectionFactory->expects(self::never())
-                                ->method('createDatabaseRowCollection');
+                                ->method('createMultiDatabaseRowCollection');
 
-        $this->helper->loadByValue($value, Fieldnames::id, Tablenames::tl_testtabse, $offset, $limit);
+        $rtn = $this->helper->loadByValue($value, Fieldnames::id, Tablenames::tl_testtabse, $offset, $limit);
+        $this->assertNull($rtn);
     }
 
 
