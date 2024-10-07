@@ -1,6 +1,6 @@
 {
     "name": "esit/datacollections",
-    "description": "Es handelt sich um eine Erweiterung für das Open Source CMS Contao",
+    "description": "Es handelt sich um eine Erweiterung für das Open Source CMS Contao. Die Software stellt zwei Collections zur Verfügung und ist als Ersatz für den Einsatz für Arrays gedacht.",
     "license": "proprietary",
     "type": "contao-bundle",
     "authors": [

@@ -113,16 +113,16 @@ class DatabaseRowCollection extends AbstractCollection implements CollectionInte
         $value = $this->returnValue($key->value());
 
         if (true === \is_scalar($value)) {
-            $value = $this->loadHelper->loadData($this->tablename, $key, $this->returnValue($key->value()));
+            $lazyValue = $this->loadHelper->loadData($this->tablename, $key, $value);
 
-            if (null !== $value) {
-                $this->lazyData->handleValue($key->value(), $value);
+            if (null !== $lazyValue) {
+                $this->lazyData->handleValue($key->value(), $lazyValue);
 
-                return $value;
+                return $lazyValue;
             }
         }
 
-        return $this->returnValue($key->value());
+        return $value;
     }
 
 

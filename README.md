@@ -45,5 +45,3 @@ von Abhängigen Daten.
 
 Für die Erstellung der Collectsions gibt es eine Factory. Sie kann eine `ArrayCollection`, eine
 `DatabaseRowCollection` und eine `ArrayCollection` mit mehreren `DatabaseRowCollection`s erstellen.
-
-// todo add php code
