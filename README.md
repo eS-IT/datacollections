@@ -31,17 +31,17 @@ Die Erweiterung kann einfach über den Manager installiert werden.
 
 ### ArrayCollection
 
-Die `ArrayCollection` ist für den direkten Ersatz von Arrays gedacht. Die Collention kann
-beliebige Werte aufnehmen und bietet viele Methonden für den Umgang mit Arrays.
+Die `ArrayCollection` ist für den direkten Ersatz von Arrays gedacht. Die Collection kann
+beliebige Werte aufnehmen und bietet viele Methoden für den Umgang mit Arrays.
 
 ### DatabaseRowCollction
 
-Die `DatabaseRowCollection` ist eine Spezialform der ArrayCollection. Sie beitet ebenfalls
-viele Methoden für den Umgang mit Arrays. Ihr Zweck ist es eine Tabellenzeile aufzunehmen.
-Die Tabellenzeile kann mit `save()` gepseichet werden. Des Weiteren beitet Sie LazyLoading
-von Abhängigen Daten.
+Die `DatabaseRowCollection` ist eine Spezialform der ArrayCollection. Sie bietet ebenfalls
+viele Methoden für den Umgang mit Arrays. Ihr Zweck ist es, eine Tabellenzeile aufzunehmen.
+Die Tabellenzeile kann mit `save()` gespeichert werden. Des Weiteren bietet sie ein LazyLoading
+von abhängigen Daten.
 
 ### Erstellung einer Collection
 
-Für die Erstellung der Collectsions gibt es eine Factory. Sie kann eine `ArrayCollection`, eine
+Für die Erstellung der Collections gibt es eine Factory. Sie kann eine `ArrayCollection`, eine
 `DatabaseRowCollection` und eine `ArrayCollection` mit mehreren `DatabaseRowCollection`s erstellen.
