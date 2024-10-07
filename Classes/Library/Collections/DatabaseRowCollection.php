@@ -106,17 +106,19 @@ class DatabaseRowCollection extends AbstractCollection implements CollectionInte
      */
     public function getValue(FieldnameValue $key): mixed
     {
-        if (true === $this->lazyData->contains($key)) {
-            return $this->lazyData->getValue($key->value());
+        $keyName = $key->value();
+
+        if (true === $this->lazyData->contains($keyName)) {
+            return $this->lazyData->getValue($keyName);
         }
 
-        $value = $this->returnValue($key->value());
+        $value = $this->returnValue($keyName);
 
         if (true === \is_scalar($value)) {
             $lazyValue = $this->loadHelper->loadData($this->tablename, $key, $value);
 
             if (null !== $lazyValue) {
-                $this->lazyData->handleValue($key->value(), $lazyValue);
+                $this->lazyData->setValue($keyName, $lazyValue);
 
                 return $lazyValue;
             }

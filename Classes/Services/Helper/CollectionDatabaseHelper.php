@@ -2,8 +2,11 @@
 
 /**
  * @since       20.09.2024 - 16:32
+ *
  * @author      Patrick Froch <info@easySolutionsIT.de>
+ *
  * @see         http://easySolutionsIT.de
+ *
  * @copyright   e@sy Solutions IT 2024
  * @license     EULA
  */
@@ -26,14 +29,14 @@ class CollectionDatabaseHelper
 
 
     /**
-     * @param DatabaseHelper $dbHelepr
+     * @param DatabaseHelper      $dbHelepr
      * @param DatabasenameFactory $dbNameFactory
-     * @param CollectionFactory $collectionFactory
+     * @param CollectionFactory   $collectionFactory
      */
     public function __construct(
-        private readonly DatabaseHelper      $dbHelepr,
+        private readonly DatabaseHelper $dbHelepr,
         private readonly DatabasenameFactory $dbNameFactory,
-        private readonly CollectionFactory   $collectionFactory,
+        private readonly CollectionFactory $collectionFactory,
     ) {
     }
 
@@ -50,28 +53,34 @@ class CollectionDatabaseHelper
     /**
      * Fassade für DatabaseHelper::loadOneByValue()
      *
-     * @param int|string $value
+     * @param int|string          $value
      * @param FieldnamesInterface $field
      * @param TablenamesInterface $table
-     * @param int $offset
-     * @param int $limit
+     * @param int                 $offset
+     * @param int                 $limit
      *
      * @return DatabaseRowCollection|null
      *
-     * @throws \Doctrine\DBAL\Exception
+     * @throws Exception
      */
     public function loadOneByValue(
-        int|string          $value,
+        int|string $value,
         FieldnamesInterface $field,
         TablenamesInterface $table,
-        int                 $offset = 0,
-        int                 $limit = 0
+        int $offset = 0,
+        int $limit = 0
     ): ?DatabaseRowCollection {
         $tablename  = $this->dbNameFactory->createTablenameFromString($table->name);
         $fieldname  = $this->dbNameFactory->createFieldnameFromString($field->name, $tablename);
-        $data       = $this->dbHelepr->loadByValue($value, $fieldname->value(), $tablename->value(), $offset, $limit);
+        $data       = $this->dbHelepr->loadOneByValue(
+            $value,
+            $fieldname->value(),
+            $tablename->value(),
+            $offset,
+            $limit
+        );
 
-        if (!empty($data)) {
+        if (empty($data)) {
             return null;
         }
 
@@ -82,22 +91,22 @@ class CollectionDatabaseHelper
     /**
      * Fassade für DatabaseHelper::loadByValue()
      *
-     * @param int|string $value
+     * @param int|string          $value
      * @param FieldnamesInterface $field
      * @param TablenamesInterface $table
-     * @param int $offset
-     * @param int $limit
+     * @param int                 $offset
+     * @param int                 $limit
      *
      * @return DatabaseRowCollection|null
      *
-     * @throws \Doctrine\DBAL\Exception
+     * @throws Exception
      */
     public function loadByValue(
-        int|string          $value,
+        int|string $value,
         FieldnamesInterface $field,
         TablenamesInterface $table,
-        int                 $offset = 0,
-        int                 $limit = 0
+        int $offset = 0,
+        int $limit = 0
     ): ?ArrayCollection {
         $tablename  = $this->dbNameFactory->createTablenameFromString($table->name);
         $fieldname  = $this->dbNameFactory->createFieldnameFromString($field->name, $tablename);
@@ -114,12 +123,12 @@ class CollectionDatabaseHelper
     /**
      * Fassade für DatabaseHelper::loadByList()
      *
-     * @param array $valueList
-     * @param FieldnamesInterface $orderField
-     * @param TablenamesInterface $table
-     * @param string $order
-     * @param int $offset
-     * @param int $limit
+     * @param array                    $valueList
+     * @param FieldnamesInterface      $orderField
+     * @param TablenamesInterface      $table
+     * @param string                   $order
+     * @param int                      $offset
+     * @param int                      $limit
      * @param FieldnamesInterface|null $searchField
      *
      * @return ArrayCollection|null
@@ -149,7 +158,7 @@ class CollectionDatabaseHelper
             $searchFieldname->value()
         );
 
-        if (!empty($data)) {
+        if (empty($data)) {
             return null;
         }
 
@@ -160,11 +169,11 @@ class CollectionDatabaseHelper
     /**
      * Fassade für DatabaseHelper::loadByValue()
      *
-     * @param TablenamesInterface $table
+     * @param TablenamesInterface      $table
      * @param FieldnamesInterface|null $orderField
-     * @param string $order
-     * @param int $offset
-     * @param int $limit
+     * @param string                   $order
+     * @param int                      $offset
+     * @param int                      $limit
      *
      * @return DatabaseRowCollection|null
      *
@@ -186,7 +195,7 @@ class CollectionDatabaseHelper
 
         $data = $this->dbHelepr->loadAll($table->name, $orderFieldname?->value() ?: '', $order, $offset, $limit);
 
-        if (!empty($data)) {
+        if (empty($data)) {
             return null;
         }
 
@@ -198,7 +207,7 @@ class CollectionDatabaseHelper
      * Wrapper für DatabaseHelper::insert()
      *
      * @param array|ArrayCollection $values
-     * @param TablenamesInterface $table
+     * @param TablenamesInterface   $table
      *
      * @return int
      *
@@ -216,8 +225,8 @@ class CollectionDatabaseHelper
      * Wrapper für DatabaseHelper::update()
      *
      * @param array|ArrayCollection $values
-     * @param int $id
-     * @param TablenamesInterface $table
+     * @param int                   $id
+     * @param TablenamesInterface   $table
      *
      * @return void
      *
@@ -234,7 +243,7 @@ class CollectionDatabaseHelper
     /**
      * Wrapper für DatabaseHelper::delete()
      *
-     * @param string|int $value
+     * @param string|int          $value
      * @param FieldnamesInterface $field
      * @param TablenamesInterface $table
      *
@@ -244,7 +253,7 @@ class CollectionDatabaseHelper
      */
     public function delete(string|int $value, FieldnamesInterface $field, TablenamesInterface $table): void
     {
-        $this->dbHelepr->delete($value, $field->name, $table->name);
+        $this->dbHelepr->delete((string) $value, $field->name, $table->name);
     }
 
 
@@ -252,7 +261,7 @@ class CollectionDatabaseHelper
      * Wrapper für DatabaseHelper::save()
      *
      * @param array|ArrayCollection $values
-     * @param TablenamesInterface $table
+     * @param TablenamesInterface   $table
      *
      * @return int
      *

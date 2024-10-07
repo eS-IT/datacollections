@@ -15,6 +15,8 @@ declare(strict_types=1);
 
 namespace Esit\Datacollections\Classes\Services\Helper;
 
+use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
+use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Valueobjects\Classes\Database\Valueobjects\FieldnameValue;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
@@ -51,20 +53,19 @@ class LazyLoadHelper
     /**
      * Lädt die Daten einer anderen Tabelle.
      *
-     * @param TablenameValue $tablename
-     * @param FieldnameValue $fieldname
-     * @param mixed          $value
+     * @param TablenameValue   $tablename
+     * @param FieldnameValue   $fieldname
+     * @param int|string|array $value
      *
-     * @return \Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection
-     *        |\Esit\Datacollections\Classes\Library\Collections\ArrayCollection
-     *        |null
+     * @return DatabaseRowCollection|ArrayCollection|null
      *
      * @throws \Doctrine\DBAL\Exception
      */
-    public function loadData(TablenameValue $tablename, FieldnameValue $fieldname, int|string|array $value):
-     \Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection
-    |\Esit\Datacollections\Classes\Library\Collections\ArrayCollection|null
-    {
+    public function loadData(
+        TablenameValue $tablename,
+        FieldnameValue $fieldname,
+        int|string|array $value
+    ): DatabaseRowCollection|ArrayCollection|null {
         if (true === $this->configHelper->isLazyLodingField($tablename, $fieldname)) {
             $foreignTable = $this->configHelper->getForeignTable($tablename, $fieldname);
             $foreignField = $this->configHelper->getForeignField($tablename, $fieldname);
