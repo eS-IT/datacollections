@@ -15,7 +15,7 @@ namespace Esit\Datacollections\Tests\Library\Collections;
 use Esit\Databaselayer\Classes\Services\Helper\DatabaseHelper;
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
-use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
+use Esit\Datacollections\Classes\Library\Collections\AbstractDatabaseRowCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
@@ -24,7 +24,11 @@ use Esit\Valueobjects\Classes\Database\Valueobjects\FieldnameValue;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
 use PHPUnit\Framework\MockObject\MockObject;
 
-class DatabaseRowCollectionTest extends EsitTestCase
+class ConcreteDatabaseRowCollection extends AbstractDatabaseRowCollection
+{
+}
+
+class AbstractDatabaseRowCollectionTest extends EsitTestCase
 {
 
 
@@ -41,7 +45,7 @@ class DatabaseRowCollectionTest extends EsitTestCase
 
 
     /**
-     * @var (DatabaseRowCollection&MockObject)|MockObject
+     * @var (AbstractDatabaseRowCollection&MockObject)|MockObject
      */
     private $lazyValue;
 
@@ -82,9 +86,9 @@ class DatabaseRowCollectionTest extends EsitTestCase
 
 
     /**
-     * @var DatabaseRowCollection
+     * @var ConcreteDatabaseRowCollection
      */
-    private DatabaseRowCollection $collection;
+    private ConcreteDatabaseRowCollection $collection;
 
 
     protected function setUp(): void
@@ -97,7 +101,7 @@ class DatabaseRowCollectionTest extends EsitTestCase
                                            ->disableOriginalConstructor()
                                            ->getMock();
 
-        $this->lazyValue            = $this->getMockBuilder(DatabaseRowCollection::class)
+        $this->lazyValue            = $this->getMockBuilder(ArrayCollection::class)
                                            ->disableOriginalConstructor()
                                            ->getMock();
 
@@ -128,7 +132,7 @@ class DatabaseRowCollectionTest extends EsitTestCase
         $this->collectionFactory->method('createArrayCollection')
                                 ->willReturn($this->lazyData);
 
-        $this->collection           = new DatabaseRowCollection(
+        $this->collection           = new ConcreteDatabaseRowCollection(
             $this->collectionFactory,
             $this->serializeHelper,
             $this->convterHelper,
@@ -190,7 +194,7 @@ class DatabaseRowCollectionTest extends EsitTestCase
         $this->lazyData->expects(self::never())
                        ->method('setValue');
 
-        $rtn = $this->collection->getValue($this->fieldname);
+        $rtn = $this->collection->getValueFromNameObject($this->fieldname);
         $this->assertSame($value, $rtn);
     }
 
@@ -228,9 +232,9 @@ class DatabaseRowCollectionTest extends EsitTestCase
         $this->lazyData->expects(self::never())
                        ->method('setValue');
 
-        $this->collection->setValue($this->fieldname, $value);
+        $this->collection->setValueWithNameObject($this->fieldname, $value);
 
-        $rtn = $this->collection->getValue($this->fieldname);
+        $rtn = $this->collection->getValueFromNameObject($this->fieldname);
         $this->assertSame($value, $rtn);
     }
 
@@ -270,9 +274,9 @@ class DatabaseRowCollectionTest extends EsitTestCase
         $this->lazyData->expects(self::never())
                        ->method('setValue');
 
-        $this->collection->setValue($this->fieldname, $value);
+        $this->collection->setValueWithNameObject($this->fieldname, $value);
 
-        $rtn = $this->collection->getValue($this->fieldname);
+        $rtn = $this->collection->getValueFromNameObject($this->fieldname);
         $this->assertSame($value, $rtn);
     }
 
@@ -313,9 +317,9 @@ class DatabaseRowCollectionTest extends EsitTestCase
                        ->method('setValue')
                        ->with($key, $this->lazyValue);
 
-        $this->collection->setValue($this->fieldname, $value);
+        $this->collection->setValueWithNameObject($this->fieldname, $value);
 
-        $rtn = $this->collection->getValue($this->fieldname);
+        $rtn = $this->collection->getValueFromNameObject($this->fieldname);
         $this->assertSame($this->lazyValue, $rtn);
     }
 
@@ -338,7 +342,7 @@ class DatabaseRowCollectionTest extends EsitTestCase
                        ->method('remove')
                        ->with($key);
 
-        $this->collection->setValue($this->fieldname, $value);
+        $this->collection->setValueWithNameObject($this->fieldname, $value);
     }
 
 
@@ -359,6 +363,6 @@ class DatabaseRowCollectionTest extends EsitTestCase
         $this->lazyData->expects(self::never())
                        ->method('remove');
 
-        $this->collection->setValue($this->fieldname, $value);
+        $this->collection->setValueWithNameObject($this->fieldname, $value);
     }
 }

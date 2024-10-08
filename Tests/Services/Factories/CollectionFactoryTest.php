@@ -15,10 +15,11 @@ namespace Esit\Datacollections\Tests\Services\Factories;
 use Esit\Databaselayer\Classes\Services\Helper\DatabaseHelper;
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
-use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
+use Esit\Datacollections\Classes\Library\Collections\AbstractDatabaseRowCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
+use Esit\Valueobjects\Classes\Database\Services\Factories\DatabasenameFactory;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -64,6 +65,12 @@ class CollectionFactoryTest extends TestCase
 
 
     /**
+     * @var (DatabasenameFactory&MockObject)|MockObject
+     */
+    private $nameFactory;
+
+
+    /**
      * @var CollectionFactory
      */
     private CollectionFactory $factory;
@@ -95,7 +102,11 @@ class CollectionFactoryTest extends TestCase
                                        ->disableOriginalConstructor()
                                        ->getMock();
 
-        $this->rowCollection    = $this->getMockBuilder(DatabaseRowCollection::class)
+        $this->nameFactory      = $this->getMockBuilder(DatabasenameFactory::class)
+                                       ->disableOriginalConstructor()
+                                       ->getMock();
+
+        $this->rowCollection    = $this->getMockBuilder(AbstractDatabaseRowCollection::class)
                                        ->disableOriginalConstructor()
                                        ->getMock();
 
@@ -103,7 +114,8 @@ class CollectionFactoryTest extends TestCase
             $this->lazyLoadHelper,
             $this->dbHelper,
             $this->serialzeHelper,
-            $this->converterHelper
+            $this->converterHelper,
+            $this->nameFactory
         );
     }
 

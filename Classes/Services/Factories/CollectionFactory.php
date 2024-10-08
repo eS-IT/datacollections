@@ -19,10 +19,12 @@ use Esit\Databaselayer\Classes\Services\Helper\DatabaseHelper;
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Library\Collections\AbstractCollection;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
+use Esit\Datacollections\Classes\Library\Collections\AbstractDatabaseRowCollection;
 use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
 use Esit\Datacollections\Classes\Library\Iterator\CollectionIerrator;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
+use Esit\Valueobjects\Classes\Database\Services\Factories\DatabasenameFactory;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
 
 class CollectionFactory
@@ -30,16 +32,18 @@ class CollectionFactory
 
 
     /**
-     * @param LazyLoadHelper  $lazyLoadHelper
-     * @param DatabaseHelper  $dbHelper
+     * @param LazyLoadHelper $lazyLoadHelper
+     * @param DatabaseHelper $dbHelper
      * @param SerializeHelper $serializeHelper
      * @param ConverterHelper $converterHelper
+     * @param DatabasenameFactory $nameFactory
      */
     public function __construct(
         private readonly LazyLoadHelper $lazyLoadHelper,
         private readonly DatabaseHelper $dbHelper,
         private readonly SerializeHelper $serializeHelper,
-        private readonly ConverterHelper $converterHelper
+        private readonly ConverterHelper $converterHelper,
+        private readonly DatabasenameFactory $nameFactory
     ) {
         $this->lazyLoadHelper->setCollectionFactory($this);
         $this->converterHelper->setCollectionFactory($this);
@@ -73,6 +77,7 @@ class CollectionFactory
         array|ArrayCollection $data = []
     ): DatabaseRowCollection {
         return new DatabaseRowCollection(
+            $this->nameFactory,
             $this,
             $this->serializeHelper,
             $this->converterHelper,

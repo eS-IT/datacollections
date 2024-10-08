@@ -17,11 +17,11 @@ namespace Esit\Datacollections\Classes\Services\Helper;
 
 use Doctrine\DBAL\Exception;
 use Esit\Databaselayer\Classes\Services\Helper\DatabaseHelper;
-use Esit\Datacollections\Classes\Enums\FieldnamesInterface;
-use Esit\Datacollections\Classes\Enums\TablenamesInterface;
+use Esit\Datacollections\Classes\Library\Collections\AbstractDatabaseRowCollection;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
-use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
+use Esit\Valueobjects\Classes\Database\Enums\FieldnamesInterface;
+use Esit\Valueobjects\Classes\Database\Enums\TablenamesInterface;
 use Esit\Valueobjects\Classes\Database\Services\Factories\DatabasenameFactory;
 
 class CollectionDatabaseHelper
@@ -59,7 +59,7 @@ class CollectionDatabaseHelper
      * @param int                 $offset
      * @param int                 $limit
      *
-     * @return DatabaseRowCollection|null
+     * @return AbstractDatabaseRowCollection|null
      *
      * @throws Exception
      */
@@ -69,7 +69,7 @@ class CollectionDatabaseHelper
         TablenamesInterface $table,
         int $offset = 0,
         int $limit = 0
-    ): ?DatabaseRowCollection {
+    ): ?AbstractDatabaseRowCollection {
         $tablename  = $this->dbNameFactory->createTablenameFromString($table->name);
         $fieldname  = $this->dbNameFactory->createFieldnameFromString($field->name, $tablename);
         $data       = $this->dbHelepr->loadOneByValue(
@@ -97,7 +97,7 @@ class CollectionDatabaseHelper
      * @param int                 $offset
      * @param int                 $limit
      *
-     * @return DatabaseRowCollection|null
+     * @return AbstractDatabaseRowCollection|null
      *
      * @throws Exception
      */
@@ -175,7 +175,7 @@ class CollectionDatabaseHelper
      * @param int                      $offset
      * @param int                      $limit
      *
-     * @return DatabaseRowCollection|null
+     * @return AbstractDatabaseRowCollection|null
      *
      * @throws Exception
      */

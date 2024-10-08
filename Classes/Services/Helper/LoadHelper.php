@@ -18,7 +18,7 @@ namespace Esit\Datacollections\Classes\Services\Helper;
 use Esit\Databaselayer\Classes\Services\Helper\DatabaseHelper;
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
-use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
+use Esit\Datacollections\Classes\Library\Collections\AbstractDatabaseRowCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Valueobjects\Classes\Database\Valueobjects\FieldnameValue;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
@@ -65,7 +65,7 @@ class LoadHelper
      * @param FieldnameValue $foreignField
      * @param mixed          $value
      *
-     * @return DatabaseRowCollection|null
+     * @return AbstractDatabaseRowCollection|null
      *
      * @throws \Doctrine\DBAL\Exception
      */
@@ -73,7 +73,7 @@ class LoadHelper
         TablenameValue $foreignTable,
         FieldnameValue $foreignField,
         mixed $value
-    ): ?DatabaseRowCollection {
+    ): ?AbstractDatabaseRowCollection {
         $data = $this->dbHelper->loadOneByValue($value, $foreignField->value(), $foreignTable->value());
 
         if (!empty($data)) {

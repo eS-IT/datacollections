@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Esit\Datacollections\Tests\Services\Helper;
 
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
-use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
+use Esit\Datacollections\Classes\Library\Collections\AbstractDatabaseRowCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\ConfigurationHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
@@ -58,7 +58,7 @@ class LazyLoadHelperTest extends TestCase
 
 
     /**
-     * @var (DatabaseRowCollection&MockObject)|MockObject
+     * @var (AbstractDatabaseRowCollection&MockObject)|MockObject
      */
     private $databaserow;
 
@@ -97,7 +97,7 @@ class LazyLoadHelperTest extends TestCase
                                            ->disableOriginalConstructor()
                                            ->getMock();
 
-        $this->databaserow          = $this->getMockBuilder(DatabaseRowCollection::class)
+        $this->databaserow          = $this->getMockBuilder(AbstractDatabaseRowCollection::class)
                                            ->disableOriginalConstructor()
                                            ->getMock();
 

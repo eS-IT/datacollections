@@ -1,12 +1,9 @@
 <?php
 
 /**
- * @since       05.09.2024 - 17:31
- *
+ * @since       08.10.2024 - 06:50
  * @author      Patrick Froch <info@easySolutionsIT.de>
- *
  * @see         http://easySolutionsIT.de
- *
  * @copyright   e@sy Solutions IT 2024
  * @license     EULA
  */
@@ -20,37 +17,27 @@ use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
+use Esit\Valueobjects\Classes\Database\Enums\FieldnamesInterface;
+use Esit\Valueobjects\Classes\Database\Services\Factories\DatabasenameFactory;
 use Esit\Valueobjects\Classes\Database\Valueobjects\FieldnameValue;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
 
-class DatabaseRowCollection extends AbstractCollection implements CollectionInterface
+class DatabaseRowCollection extends AbstractDatabaseRowCollection
 {
 
 
     /**
-     * Bei diesem Collection-Typ handelt es sich um einen Datencontainer für eine Tabellenzeile.
-     * Er kann abhängige Daten nachladen und die enthaltenen Daten nach Änderungen speichern.
-     */
-
-
-    /**
-     * Map für die nachgeladenen Daten.
-     *
-     * @var ArrayCollection
-     */
-    protected ArrayCollection $lazyData;
-
-
-    /**
-     * @param CollectionFactory     $collectionFactory
-     * @param SerializeHelper       $serializeHelper
-     * @param ConverterHelper       $converterHelper
-     * @param DatabaseHelper        $databaseHelper
-     * @param LazyLoadHelper        $loadHelper
-     * @param TablenameValue        $tablename
+     * @param DatabasenameFactory $nameFactory
+     * @param CollectionFactory $collectionFactory
+     * @param SerializeHelper $serializeHelper
+     * @param ConverterHelper $converterHelper
+     * @param DatabaseHelper $databaseHelper
+     * @param LazyLoadHelper $loadHelper
+     * @param TablenameValue $tablename
      * @param array|ArrayCollection $data
      */
     public function __construct(
+        private readonly DatabasenameFactory $nameFactory,
         private readonly CollectionFactory $collectionFactory,
         private readonly SerializeHelper $serializeHelper,
         private readonly ConverterHelper $converterHelper,
@@ -59,92 +46,51 @@ class DatabaseRowCollection extends AbstractCollection implements CollectionInte
         private readonly TablenameValue $tablename,
         array|ArrayCollection $data = []
     ) {
-        $data = $data instanceof ArrayCollection ? $data->toArray() : $data;
         parent::__construct(
             $this->collectionFactory,
             $this->serializeHelper,
             $this->converterHelper,
+            $this->databaseHelper,
+            $this->loadHelper,
+            $this->tablename,
             $data
         );
-
-        $this->lazyData = $this->collectionFactory->createArrayCollection();
     }
 
 
     /**
-     * @return TablenameValue
-     */
-    public function getTable(): TablenameValue
-    {
-        return $this->tablename;
-    }
-
-
-    /**
-     * Speichet die Daten in der Datenbank.
+     * Gibt einen Wert zurück. Der Schlüssel muss als FieldnamesInterface
+     * übergeben werden und wird in ein FieldnameValue umgewandelt.
      *
-     * @return void
-     *
-     * @throws \Doctrine\DBAL\Exception
-     */
-    public function save(): void
-    {
-        $this->databaseHelper->save($this->tablename->value(), $this->toArray());
-    }
-
-
-    /**
-     * Gibt einen Wert zurück.
-     * Wenn der Wert mit Daten in einer anderen Tabelle verbunden sind,
-     * werden diese Daten geladen und zurückgegeben.
-     *
-     * @param FieldnameValue $key
+     * @param FieldnamesInterface $key
      *
      * @return mixed
      *
      * @throws \Doctrine\DBAL\Exception
      */
-    public function getValue(FieldnameValue $key): mixed
+    public function getValue(FieldnamesInterface $key): mixed
     {
-        $keyName = $key->value();
+        $keyValue = $this->nameFactory->createFieldnameFromInterface($key, $this->tablename);
 
-        if (true === $this->lazyData->contains($keyName)) {
-            return $this->lazyData->getValue($keyName);
-        }
-
-        $value = $this->returnValue($keyName);
-
-        if (true === \is_scalar($value)) {
-            $lazyValue = $this->loadHelper->loadData($this->tablename, $key, $value);
-
-            if (null !== $lazyValue) {
-                $this->lazyData->setValue($keyName, $lazyValue);
-
-                return $lazyValue;
-            }
-        }
-
-        return $value;
+        return $this->getValueFromNameObject($keyValue);
     }
 
 
     /**
-     * Setzt einen Wert.
+     * Setzt einen Wert. Der Schlüssel muss als FieldnamesInterface
+     * übergeben werden und wird in ein FieldnameValue umgewandelt.
      *
-     * @param FieldnameValue $key
-     * @param mixed          $value
+     * @param FieldnamesInterface $key
+     * @param mixed $value
      *
-     * @return void
+     * @return mixed
+     *
+     * @throws \Doctrine\DBAL\Exception
      */
-    public function setValue(FieldnameValue $key, mixed $value): void
+    public function setValue(FieldnamesInterface $key, mixed $value): mixed
     {
-        $value = $value instanceof ArrayCollection ? $value->toArray() : $value;
+        $keyValue = $this->nameFactory->createFieldnameFromInterface($key, $this->tablename);
 
-        if (true === $this->lazyData->contains($key->value())) {
-            // Nachgeladene Daten entfernen, wenn der Wert neu gesetzt wird!
-            $this->lazyData->remove($key->value());
-        }
-
-        $this->handleValue($key->value(), $value);
+        $this->setValueWithNameObject($keyValue, $value);
     }
 }

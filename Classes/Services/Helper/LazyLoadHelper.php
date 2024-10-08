@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace Esit\Datacollections\Classes\Services\Helper;
 
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
-use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
+use Esit\Datacollections\Classes\Library\Collections\AbstractDatabaseRowCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Valueobjects\Classes\Database\Valueobjects\FieldnameValue;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
@@ -57,7 +57,7 @@ class LazyLoadHelper
      * @param FieldnameValue   $fieldname
      * @param int|string|array $value
      *
-     * @return DatabaseRowCollection|ArrayCollection|null
+     * @return AbstractDatabaseRowCollection|ArrayCollection|null
      *
      * @throws \Doctrine\DBAL\Exception
      */
@@ -65,7 +65,7 @@ class LazyLoadHelper
         TablenameValue $tablename,
         FieldnameValue $fieldname,
         int|string|array $value
-    ): DatabaseRowCollection|ArrayCollection|null {
+    ): AbstractDatabaseRowCollection|ArrayCollection|null {
         if (true === $this->configHelper->isLazyLodingField($tablename, $fieldname)) {
             $foreignTable = $this->configHelper->getForeignTable($tablename, $fieldname);
             $foreignField = $this->configHelper->getForeignField($tablename, $fieldname);
