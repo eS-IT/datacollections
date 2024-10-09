@@ -86,11 +86,11 @@ class DatabaseRowCollection extends AbstractDatabaseRowCollection
      * @param FieldnamesInterface $key
      * @param mixed               $value
      *
-     * @return mixed
+     * @return void
      *
      * @throws \Doctrine\DBAL\Exception
      */
-    public function setValue(FieldnamesInterface $key, mixed $value): mixed
+    public function setValue(FieldnamesInterface $key, mixed $value): void
     {
         $keyValue = $this->nameFactory->createFieldnameFromInterface($key, $this->tablename);
 

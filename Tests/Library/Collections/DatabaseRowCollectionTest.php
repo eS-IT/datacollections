@@ -18,10 +18,16 @@ use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
+use Esit\Valueobjects\Classes\Database\Enums\FieldnamesInterface;
 use Esit\Valueobjects\Classes\Database\Services\Factories\DatabasenameFactory;
+use Esit\Valueobjects\Classes\Database\Valueobjects\FieldnameValue;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+
+enum MyFieldnames implements FieldnamesInterface {
+    case myfield;
+}
 
 class DatabaseRowCollectionTest extends TestCase
 {
@@ -52,7 +58,7 @@ class DatabaseRowCollectionTest extends TestCase
 
 
     /**
-     * @var (LazyLoadHelper&MockObject)|MockObject 
+     * @var (LazyLoadHelper&MockObject)|MockObject
      */
     private $loadHelper;
 
@@ -68,11 +74,13 @@ class DatabaseRowCollectionTest extends TestCase
      */
     private $tablename;
 
+    private $fieldname;
+
 
     /**
      * @var DatabaseRowCollection
      */
-    private DatabaseRowCollection $databaseRowCollection;
+    private DatabaseRowCollection $dbRowCollection;
 
 
     protected function setUp(): void
@@ -105,28 +113,62 @@ class DatabaseRowCollectionTest extends TestCase
                                            ->disableOriginalConstructor()
                                            ->getMock();
 
-        $this->dbRowCollection      = new DatabaseRowCollection(
-            $this->nameFactory,
-            $this->collectionFactory,
-            $this->serializeHelper,
-            $this->convterHelper,
-            $this->databaseHelper,
-            $this->loadHelper,
-            $this->tablename
-        );
+        $this->fieldname            = $this->getMockBuilder(FieldnameValue::class)
+                                           ->disableOriginalConstructor()
+                                           ->getMock();
+
+        $this->dbRowCollection      = $this->getMockBuilder(DatabaseRowCollection::class)
+                                           ->setConstructorArgs([
+                                               $this->nameFactory,
+                                               $this->collectionFactory,
+                                               $this->serializeHelper,
+                                               $this->convterHelper,
+                                               $this->databaseHelper,
+                                               $this->loadHelper,
+                                               $this->tablename
+                                           ])->onlyMethods(['getValueFromNameObject', 'setValueWithNameObject'])
+                                           ->getMock();
+    }
+
+
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testGetValue(): void
+    {
+        $value = 'Test';
+
+        $this->nameFactory->expects(self::once())
+                          ->method('createFieldnameFromInterface')
+                          ->with(MyFieldnames::myfield, $this->tablename)
+                          ->willReturn($this->fieldname);
+
+        $this->dbRowCollection->expects(self::once())
+                              ->method('getValueFromNameObject')
+                              ->with($this->fieldname)
+                              ->willReturn($value);
+
+        $rtn = $this->dbRowCollection->getValue(MyFieldnames::myfield);
+
+        $this->assertSame($value, $rtn);
     }
 
 
 
     public function testSetValue(): void
     {
-        self::markTestIncomplete('Not implemented yet');
-    }
+        $value = 'Test';
 
+        $this->nameFactory->expects(self::once())
+                          ->method('createFieldnameFromInterface')
+                          ->with(MyFieldnames::myfield, $this->tablename)
+                          ->willReturn($this->fieldname);
 
+        $this->dbRowCollection->expects(self::once())
+                              ->method('setValueWithNameObject')
+                              ->with($this->fieldname, $value);
 
-    public function testGetValue(): void
-    {
-        self::markTestIncomplete('Not implemented yet');
+        $this->dbRowCollection->setValue(MyFieldnames::myfield, $value);
     }
 }
