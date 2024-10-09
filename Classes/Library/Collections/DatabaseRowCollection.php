@@ -2,8 +2,11 @@
 
 /**
  * @since       08.10.2024 - 06:50
+ *
  * @author      Patrick Froch <info@easySolutionsIT.de>
+ *
  * @see         http://easySolutionsIT.de
+ *
  * @copyright   e@sy Solutions IT 2024
  * @license     EULA
  */
@@ -27,13 +30,13 @@ class DatabaseRowCollection extends AbstractDatabaseRowCollection
 
 
     /**
-     * @param DatabasenameFactory $nameFactory
-     * @param CollectionFactory $collectionFactory
-     * @param SerializeHelper $serializeHelper
-     * @param ConverterHelper $converterHelper
-     * @param DatabaseHelper $databaseHelper
-     * @param LazyLoadHelper $loadHelper
-     * @param TablenameValue $tablename
+     * @param DatabasenameFactory   $nameFactory
+     * @param CollectionFactory     $collectionFactory
+     * @param SerializeHelper       $serializeHelper
+     * @param ConverterHelper       $converterHelper
+     * @param DatabaseHelper        $databaseHelper
+     * @param LazyLoadHelper        $loadHelper
+     * @param TablenameValue        $tablename
      * @param array|ArrayCollection $data
      */
     public function __construct(
@@ -81,7 +84,7 @@ class DatabaseRowCollection extends AbstractDatabaseRowCollection
      * übergeben werden und wird in ein FieldnameValue umgewandelt.
      *
      * @param FieldnamesInterface $key
-     * @param mixed $value
+     * @param mixed               $value
      *
      * @return mixed
      *

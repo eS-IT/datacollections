@@ -15,6 +15,7 @@ namespace Esit\Datacollections\Tests\Services\Helper;
 use Esit\Databaselayer\Classes\Services\Helper\DatabaseHelper;
 use Esit\Datacollections\Classes\Library\Collections\AbstractDatabaseRowCollection;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
+use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\CollectionDatabaseHelper;
 use Esit\Datacollections\EsitTestCase;
@@ -70,7 +71,7 @@ class CollectionDatabaseHelperTest extends EsitTestCase
 
 
     /**
-     * @var (AbstractDatabaseRowCollection&MockObject)|MockObject
+     * @var (DatabaseRowCollection&MockObject)|MockObject
      */
     private $dbCollection;
 
@@ -109,7 +110,7 @@ class CollectionDatabaseHelperTest extends EsitTestCase
                                            ->disableOriginalConstructor()
                                            ->getMock();
 
-        $this->dbCollection         = $this->getMockBuilder(AbstractDatabaseRowCollection::class)
+        $this->dbCollection         = $this->getMockBuilder(DatabaseRowCollection::class)
                                            ->disableOriginalConstructor()
                                            ->getMock();
 
@@ -181,7 +182,6 @@ class CollectionDatabaseHelperTest extends EsitTestCase
      */
     public function testLoadOneByValueReturnDatabaseRowIfDataFound(): void
     {
-        self::markTestIncomplete('Muss für Version 2.0 angepasst werden');
         $value  = 'test';
         $offset = 12;
         $limit  = 34;

@@ -19,7 +19,6 @@ use Esit\Databaselayer\Classes\Services\Helper\DatabaseHelper;
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Library\Collections\AbstractCollection;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
-use Esit\Datacollections\Classes\Library\Collections\AbstractDatabaseRowCollection;
 use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
 use Esit\Datacollections\Classes\Library\Iterator\CollectionIerrator;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
@@ -32,10 +31,10 @@ class CollectionFactory
 
 
     /**
-     * @param LazyLoadHelper $lazyLoadHelper
-     * @param DatabaseHelper $dbHelper
-     * @param SerializeHelper $serializeHelper
-     * @param ConverterHelper $converterHelper
+     * @param LazyLoadHelper      $lazyLoadHelper
+     * @param DatabaseHelper      $dbHelper
+     * @param SerializeHelper     $serializeHelper
+     * @param ConverterHelper     $converterHelper
      * @param DatabasenameFactory $nameFactory
      */
     public function __construct(
