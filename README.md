@@ -16,7 +16,6 @@ __e@sy Solutions IT:__ Patrick Froch <info@easySolutionsIT.de>
 ## Voraussetzungen
 
 - php: ^8.2
-- ext-ds: *
 - contao/core-bundle:^5.3
 - esit/valueobjects: ^1.0
 - esit/databaselayer: ^1.0
@@ -168,4 +167,81 @@ class MyClass
 
 ### Vewendung der DatabaseRowCollection
 
-...
+Für die Verwendung der `DatabaseRowCollection` werden zunächst Enumerations vom Typ `TablenamesInterface` und
+`FieldnamesInterface` benötigt (s.o.). Mit diesen können dann über die Factory die `DatabaseRowCollection` erstellt
+werden. Da intern ValueObjects für die Namen der Tabellen und Felder verwendet werden, können nur `DatabaseRowCollection`
+für existierende Tabellen erstellt werden und nur auf darin wirklich enthaltene Felder zugegriffen werden.
+
+```php
+use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
+
+class MyClass
+{
+
+    public function __construct(private readonly CollectionFactory $factory)
+    {
+    }
+
+
+    public function useDatabaseRow(): void
+    {
+        // Eine leere Collection erstellen
+        $myDbCollection = $this->factory->createDatabaseRowCollection(
+            Tablenames::tl_test_data,
+            [] // Hier können Daten als Array oder ArrayCollection übergeben werden.
+        );
+
+        // ArrayCollection mit mehreren DatabaseRowCollections erstellen.
+        $myCollections = $this->factory->createMultiDatabaseRowCollection(
+            Tablenames::tl_test_data,
+            [] // Hier können Daten als multidemensionales Array übergeben werden.
+        );
+
+        // setValue
+        $myDbCollection->getValue(TlTestData::specialdata, 'TestValue');
+
+        // getValue
+        echo $myDbCollection->getValue(TlTestData::specialdata); // => 'TestValue'
+
+        // fetchData
+        $data = $myDbCollection->fetchData(); // Alle Daten der Tabellenzeile als Array
+
+        // Iterator ($myCollections ist eine ArrayCollection, $oneDbCollection je eine DatabaseRowCollection)
+        foreach ($myCollections as $oneDbCollection) {
+            var_dump($oneDbCollection); // oder alle anderen Aktionen einer DatabaseRowCollection
+        }
+    }
+}
+```
+
+Für den Zugriff auf einen Wert wird immer ein `FieldnamesInterface` benötigt.
+
+Auf den `DatabaseRowCollection` stehen die gleichen Methoden zur Verfügung, wie auf den `ArrayCollection`. Zusätzlich
+gibt es die Methode `save` um den Datensatz zu speichern.
+
+Arrays werden immmer als serialisierter String abgelegt uns als `ArrayCollection` zurückgegeben.
+
+Wenn im DCA das LazyLoading konfiguriert ist, werden die abhängigen Daten automatisch beim Zugriff auf das Feld
+geladen und zurückgegeben.
+
+### LazyLoading
+
+Damit die abhängigen Daten geladen werden können, muss das LazyLoading im DCA konfiguriert werden.
+
+```php
+$table = 'tl_test_data';
+
+$GLOBALS['TL_DCA'][$table]['fields']['author'] = [
+    'label'                 => &$GLOBALS['TL_LANG'][$table]['author'],
+    'exclude'               => true,
+    'inputType'             => 'text',
+    'foreignKey'            => 'tl_member.CONCAT(firstname,' ',lastname)',
+    'lazyloading'           => ['table'=>'tl_member', 'field'=>'id', 'serialised'=>false],
+    'eval'                  => ['mandatory'=>true, 'maxlength'=>255],
+    'sql'                   => "varchar(255) NOT NULL default ''"
+];
+```
+
+`table` gibt die Tabelle an, aus der die Daten geladen werden sollen. `field` gibt an, in welchem Feld der Fremdtabelle
+der Wert gesucht wird und `serialised` gibt an, ob es sich um einen Werte (`false`) oder ein serialisiertes Array (`true`)
+von Werten handelt.
