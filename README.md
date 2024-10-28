@@ -28,7 +28,7 @@ Die Erweiterung kann einfach über den Manager installiert werden.
 
 ## NameInterfaces
 
-Die NameInterfaces sind für die Verwendung der DatabaseRowCollction erforderlich. Damit sichergestellt ist, dass es
+Die NameInterfaces sind für die Verwendung der `DatabaseRowCollction` erforderlich. Damit sichergestellt ist, dass es
 sich um valide Namen für Tabellen und Felder handelt, werden ValueObjects verwendet.
 
 Es muss eine Aufzählung (`Enumeration`) mit den Tabellennamen und je eine pro Tabelle mit den Feldnamen erstellt werden.
@@ -49,7 +49,7 @@ enum Tablenames implements TablenamesInterface
 
 ### FieldnamesInterface
 
-Die Aufzählungen, die die das `FieldnamesInterface` implementieren, enthalten die Namen aller Felder einer Tabelle. Es
+Die Aufzählungen, die das `FieldnamesInterface` implementieren, enthalten die Namen aller Felder einer Tabelle. Es
 muss für jede Tabelle eine Aufzählung mit den entsprechenden Feldern geben.
 
 
@@ -119,7 +119,7 @@ beliebige Werte aufnehmen und bietet viele Methoden für den Umgang mit Arrays.
 Die `DatabaseRowCollection` ist eine Spezialform der ArrayCollection. Sie bietet ebenfalls
 viele Methoden für den Umgang mit Arrays. Ihr Zweck ist es, eine Tabellenzeile aufzunehmen.
 Die Tabellenzeile kann mit `save()` gespeichert werden. Des Weiteren bietet sie ein LazyLoading
-von abhängigen Daten.
+von abhängigen Daten, wenn dies im DCA konfiguriert wurde.
 
 
 ## Vewendung
@@ -168,7 +168,7 @@ class MyClass
 ### Vewendung der DatabaseRowCollection
 
 Für die Verwendung der `DatabaseRowCollection` werden zunächst Enumerations vom Typ `TablenamesInterface` und
-`FieldnamesInterface` benötigt (s.o.). Mit diesen können dann über die Factory die `DatabaseRowCollection` erstellt
+`FieldnamesInterface` benötigt (s.o.). Mit diesen können dann über die Factory die `DatabaseRowCollection`s erstellt
 werden. Da intern ValueObjects für die Namen der Tabellen und Felder verwendet werden, können nur `DatabaseRowCollection`
 für existierende Tabellen erstellt werden und nur auf darin wirklich enthaltene Felder zugegriffen werden.
 
@@ -191,12 +191,6 @@ class MyClass
             [] // Hier können Daten als Array oder ArrayCollection übergeben werden.
         );
 
-        // ArrayCollection mit mehreren DatabaseRowCollections erstellen.
-        $myCollections = $this->factory->createMultiDatabaseRowCollection(
-            Tablenames::tl_test_data,
-            [] // Hier können Daten als multidemensionales Array übergeben werden.
-        );
-
         // setValue
         $myDbCollection->getValue(TlTestData::specialdata, 'TestValue');
 
@@ -205,6 +199,12 @@ class MyClass
 
         // fetchData
         $data = $myDbCollection->fetchData(); // Alle Daten der Tabellenzeile als Array
+
+        // ArrayCollection mit mehreren DatabaseRowCollections erstellen.
+        $myCollections = $this->factory->createMultiDatabaseRowCollection(
+            Tablenames::tl_test_data,
+            [] // Hier können Daten als multidemensionales Array übergeben werden.
+        );
 
         // Iterator ($myCollections ist eine ArrayCollection, $oneDbCollection je eine DatabaseRowCollection)
         foreach ($myCollections as $oneDbCollection) {
@@ -219,7 +219,7 @@ Für den Zugriff auf einen Wert wird immer ein `FieldnamesInterface` benötigt.
 Auf den `DatabaseRowCollection` stehen die gleichen Methoden zur Verfügung, wie auf den `ArrayCollection`. Zusätzlich
 gibt es die Methode `save` um den Datensatz zu speichern.
 
-Arrays werden immmer als serialisierter String abgelegt uns als `ArrayCollection` zurückgegeben.
+Arrays werden immmer als serialisierter String abgelegt und als `ArrayCollection` zurückgegeben.
 
 Wenn im DCA das LazyLoading konfiguriert ist, werden die abhängigen Daten automatisch beim Zugriff auf das Feld
 geladen und zurückgegeben.
@@ -243,5 +243,5 @@ $GLOBALS['TL_DCA'][$table]['fields']['author'] = [
 ```
 
 `table` gibt die Tabelle an, aus der die Daten geladen werden sollen. `field` gibt an, in welchem Feld der Fremdtabelle
-der Wert gesucht wird und `serialised` gibt an, ob es sich um einen Werte (`false`) oder ein serialisiertes Array (`true`)
-von Werten handelt.
+der Wert gesucht wird und `serialised` gibt an, ob es sich um einen Werte (`false`) oder ein serialisiertes Array
+von Werten handelt (`true`).
