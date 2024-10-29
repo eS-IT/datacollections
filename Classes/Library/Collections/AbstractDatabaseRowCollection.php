@@ -83,7 +83,7 @@ abstract class AbstractDatabaseRowCollection extends AbstractCollection implemen
     /**
      * Speichet die Daten in der Datenbank.
      *
-     * @return void
+     * @return int
      *
      * @throws \Doctrine\DBAL\Exception
      */
