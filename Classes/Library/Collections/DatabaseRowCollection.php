@@ -83,13 +83,13 @@ class DatabaseRowCollection extends AbstractCollection implements CollectionInte
     /**
      * Speichet die Daten in der Datenbank.
      *
-     * @return void
+     * @return int
      *
      * @throws \Doctrine\DBAL\Exception
      */
-    public function save(): void
+    public function save(): int
     {
-        $this->databaseHelper->save($this->tablename->value(), $this->toArray());
+        return $this->databaseHelper->save($this->tablename->value(), $this->toArray());
     }
 
 
