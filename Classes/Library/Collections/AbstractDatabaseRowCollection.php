@@ -87,9 +87,9 @@ abstract class AbstractDatabaseRowCollection extends AbstractCollection implemen
      *
      * @throws \Doctrine\DBAL\Exception
      */
-    public function save(): void
+    public function save(): int
     {
-        $this->databaseHelper->save($this->tablename->value(), $this->toArray());
+        return $this->databaseHelper->save($this->tablename->value(), $this->toArray());
     }
 
 
