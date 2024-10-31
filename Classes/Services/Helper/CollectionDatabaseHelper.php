@@ -51,6 +51,24 @@ class CollectionDatabaseHelper
 
 
     /**
+     * @return DatabasenameFactory
+     */
+    public function getDatabasenameFactory(): DatabasenameFactory
+    {
+        return $this->dbNameFactory;
+    }
+
+
+    /**
+     * @return CollectionFactory
+     */
+    public function getCollectionFactory(): CollectionFactory
+    {
+        return $this->collectionFactory;
+    }
+
+
+    /**
      * Fassade für DatabaseHelper::loadOneByValue()
      *
      * @param int|string          $value
@@ -70,8 +88,8 @@ class CollectionDatabaseHelper
         int $offset = 0,
         int $limit = 0
     ): ?AbstractDatabaseRowCollection {
-        $tablename  = $this->dbNameFactory->createTablenameFromString($table->name);
-        $fieldname  = $this->dbNameFactory->createFieldnameFromString($field->name, $tablename);
+        $tablename  = $this->dbNameFactory->createTablenameFromInterface($table);
+        $fieldname  = $this->dbNameFactory->createFieldnameFromInterface($field, $tablename);
         $data       = $this->dbHelepr->loadOneByValue(
             $value,
             $fieldname->value(),
@@ -108,8 +126,8 @@ class CollectionDatabaseHelper
         int $offset = 0,
         int $limit = 0
     ): ?ArrayCollection {
-        $tablename  = $this->dbNameFactory->createTablenameFromString($table->name);
-        $fieldname  = $this->dbNameFactory->createFieldnameFromString($field->name, $tablename);
+        $tablename  = $this->dbNameFactory->createTablenameFromInterface($table);
+        $fieldname  = $this->dbNameFactory->createFieldnameFromInterface($field, $tablename);
         $data       = $this->dbHelepr->loadByValue($value, $fieldname->value(), $tablename->value(), $offset, $limit);
 
         if (empty($data)) {
@@ -144,8 +162,8 @@ class CollectionDatabaseHelper
         int $limit = 0,
         ?FieldnamesInterface $searchField = null
     ): ?ArrayCollection {
-        $tablename          = $this->dbNameFactory->createTablenameFromString($table->name);
-        $orderFieldname     = $this->dbNameFactory->createFieldnameFromString($orderField->name, $tablename);
+        $tablename          = $this->dbNameFactory->createTablenameFromInterface($table);
+        $orderFieldname     = $this->dbNameFactory->createFieldnameFromInterface($orderField, $tablename);
         $searchFieldString  = null !== $searchField ? $searchField->name : 'id';
         $searchFieldname    = $this->dbNameFactory->createFieldnameFromString($searchFieldString, $tablename);
         $data               = $this->dbHelepr->loadByList(
@@ -186,11 +204,11 @@ class CollectionDatabaseHelper
         int $offset = 0,
         int $limit = 0
     ): ?ArrayCollection {
-        $tablename      = $this->dbNameFactory->createTablenameFromString($table->name);
+        $tablename      = $this->dbNameFactory->createTablenameFromInterface($table);
         $orderFieldname = null;
 
         if (null !== $orderField) {
-            $orderFieldname = $this->dbNameFactory->createFieldnameFromString($orderField->name, $tablename);
+            $orderFieldname = $this->dbNameFactory->createFieldnameFromInterface($orderField, $tablename);
         }
 
         $data = $this->dbHelepr->loadAll($table->name, $orderFieldname?->value() ?: '', $order, $offset, $limit);

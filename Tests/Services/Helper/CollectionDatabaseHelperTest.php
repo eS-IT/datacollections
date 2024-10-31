@@ -134,6 +134,18 @@ class CollectionDatabaseHelperTest extends EsitTestCase
     }
 
 
+    public function testGetDatabasenameFactory(): void
+    {
+        $this->assertSame($this->dbNameFactory, $this->helper->getDatabasenameFactory());
+    }
+
+
+    public function testgetCollectionFactory(): void
+    {
+        $this->assertSame($this->collectionFactory, $this->helper->getCollectionFactory());
+    }
+
+
     /**
      * @return void
      * @throws \Doctrine\DBAL\Exception
@@ -146,13 +158,13 @@ class CollectionDatabaseHelperTest extends EsitTestCase
         $data   = [];
 
         $this->dbNameFactory->expects(self::once())
-                            ->method('createTablenameFromString')
-                            ->with(Tablenames::tl_testtabse->name)
+                            ->method('createTablenameFromInterface')
+                            ->with(Tablenames::tl_testtabse)
                             ->willReturn($this->tablename);
 
         $this->dbNameFactory->expects(self::once())
-                            ->method('createFieldnameFromString')
-                            ->with(Fieldnames::id->name, $this->tablename)
+                            ->method('createFieldnameFromInterface')
+                            ->with(Fieldnames::id, $this->tablename)
                             ->willReturn($this->fieldname);
 
         $this->fieldname->expects(self::once())
@@ -188,13 +200,13 @@ class CollectionDatabaseHelperTest extends EsitTestCase
         $data   = ['TestData'];
 
         $this->dbNameFactory->expects(self::once())
-                            ->method('createTablenameFromString')
-                            ->with(Tablenames::tl_testtabse->name)
+                            ->method('createTablenameFromInterface')
+                            ->with(Tablenames::tl_testtabse)
                             ->willReturn($this->tablename);
 
         $this->dbNameFactory->expects(self::once())
-                            ->method('createFieldnameFromString')
-                            ->with(Fieldnames::id->name, $this->tablename)
+                            ->method('createFieldnameFromInterface')
+                            ->with(Fieldnames::id, $this->tablename)
                             ->willReturn($this->fieldname);
 
         $this->fieldname->expects(self::once())
@@ -232,13 +244,13 @@ class CollectionDatabaseHelperTest extends EsitTestCase
         $data   = [['TestValues']];
 
         $this->dbNameFactory->expects(self::once())
-                            ->method('createTablenameFromString')
-                            ->with(Tablenames::tl_testtabse->name)
+                            ->method('createTablenameFromInterface')
+                            ->with(Tablenames::tl_testtabse)
                             ->willReturn($this->tablename);
 
         $this->dbNameFactory->expects(self::once())
-                            ->method('createFieldnameFromString')
-                            ->with(Fieldnames::id->name, $this->tablename)
+                            ->method('createFieldnameFromInterface')
+                            ->with(Fieldnames::id, $this->tablename)
                             ->willReturn($this->fieldname);
 
         $this->fieldname->expects(self::once())
@@ -276,13 +288,13 @@ class CollectionDatabaseHelperTest extends EsitTestCase
         $data   = [];
 
         $this->dbNameFactory->expects(self::once())
-                            ->method('createTablenameFromString')
-                            ->with(Tablenames::tl_testtabse->name)
+                            ->method('createTablenameFromInterface')
+                            ->with(Tablenames::tl_testtabse)
                             ->willReturn($this->tablename);
 
         $this->dbNameFactory->expects(self::once())
-                            ->method('createFieldnameFromString')
-                            ->with(Fieldnames::id->name, $this->tablename)
+                            ->method('createFieldnameFromInterface')
+                            ->with(Fieldnames::id, $this->tablename)
                             ->willReturn($this->fieldname);
 
         $this->fieldname->expects(self::once())
@@ -317,19 +329,20 @@ class CollectionDatabaseHelperTest extends EsitTestCase
         $offset             = 12;
         $limit              = 34;
         $data               = [];
-        $searchFieldString  = 'uuid';
 
         $this->dbNameFactory->expects(self::once())
-                            ->method('createTablenameFromString')
-                            ->with(Tablenames::tl_testtabse->name)
+                            ->method('createTablenameFromInterface')
+                            ->with(Tablenames::tl_testtabse)
                             ->willReturn($this->tablename);
 
-        $this->dbNameFactory->expects(self::exactly(2))
+        $this->dbNameFactory->expects(self::once())
+                            ->method('createFieldnameFromInterface')
+                            ->with(Fieldnames::id, $this->tablename)
+                            ->willReturn($this->fieldname);
+
+        $this->dbNameFactory->expects(self::once())
                             ->method('createFieldnameFromString')
-                            ->with(... $this->consecutiveParams(
-                                [Fieldnames::id->name, $this->tablename],
-                                [Fieldnames::id->name, $this->tablename]
-                            ))
+                            ->with(Fieldnames::id->name, $this->tablename)
                             ->willReturn($this->fieldname);
 
         $this->fieldname->expects(self::exactly(2))
@@ -374,16 +387,18 @@ class CollectionDatabaseHelperTest extends EsitTestCase
         $data               = [];
 
         $this->dbNameFactory->expects(self::once())
-                            ->method('createTablenameFromString')
-                            ->with(Tablenames::tl_testtabse->name)
+                            ->method('createTablenameFromInterface')
+                            ->with(Tablenames::tl_testtabse)
                             ->willReturn($this->tablename);
 
-        $this->dbNameFactory->expects(self::exactly(2))
+        $this->dbNameFactory->expects(self::once())
+                            ->method('createFieldnameFromInterface')
+                            ->with(Fieldnames::id, $this->tablename)
+                            ->willReturn($this->fieldname);
+
+        $this->dbNameFactory->expects(self::once())
                             ->method('createFieldnameFromString')
-                            ->with(... $this->consecutiveParams(
-                                [Fieldnames::id->name, $this->tablename],
-                                [Fieldnames::uuid->name, $this->tablename]
-                            ))
+                            ->with(Fieldnames::uuid->name, $this->tablename)
                             ->willReturn($this->fieldname);
 
         $this->fieldname->expects(self::exactly(2))
@@ -437,16 +452,18 @@ class CollectionDatabaseHelperTest extends EsitTestCase
         $data               = [['test'], ['value']];
 
         $this->dbNameFactory->expects(self::once())
-                            ->method('createTablenameFromString')
-                            ->with(Tablenames::tl_testtabse->name)
+                            ->method('createTablenameFromInterface')
+                            ->with(Tablenames::tl_testtabse)
                             ->willReturn($this->tablename);
 
-        $this->dbNameFactory->expects(self::exactly(2))
+        $this->dbNameFactory->expects(self::once())
+                            ->method('createFieldnameFromInterface')
+                            ->with(Fieldnames::id, $this->tablename)
+                            ->willReturn($this->fieldname);
+
+        $this->dbNameFactory->expects(self::once())
                             ->method('createFieldnameFromString')
-                            ->with(... $this->consecutiveParams(
-                                [Fieldnames::id->name, $this->tablename],
-                                [Fieldnames::uuid->name, $this->tablename]
-                            ))
+                            ->with(Fieldnames::uuid->name, $this->tablename)
                             ->willReturn($this->fieldname);
 
         $this->fieldname->expects(self::exactly(2))
@@ -500,8 +517,8 @@ class CollectionDatabaseHelperTest extends EsitTestCase
         $data   = [];
 
         $this->dbNameFactory->expects(self::once())
-                            ->method('createTablenameFromString')
-                            ->with(Tablenames::tl_testtabse->name)
+                            ->method('createTablenameFromInterface')
+                            ->with(Tablenames::tl_testtabse)
                             ->willReturn($this->tablename);
 
         $this->dbNameFactory->expects(self::never())
@@ -533,12 +550,12 @@ class CollectionDatabaseHelperTest extends EsitTestCase
         $data   = [['test'], ['value']];
 
         $this->dbNameFactory->expects(self::once())
-                            ->method('createTablenameFromString')
-                            ->with(Tablenames::tl_testtabse->name)
+                            ->method('createTablenameFromInterface')
+                            ->with(Tablenames::tl_testtabse)
                             ->willReturn($this->tablename);
 
         $this->dbNameFactory->expects(self::never())
-                            ->method('createFieldnameFromString');
+                            ->method('createFieldnameFromInterface');
 
         $this->dbHelepr->expects(self::once())
                        ->method('loadAll')
@@ -568,13 +585,13 @@ class CollectionDatabaseHelperTest extends EsitTestCase
         $data   = [['test'], ['value']];
 
         $this->dbNameFactory->expects(self::once())
-                            ->method('createTablenameFromString')
-                            ->with(Tablenames::tl_testtabse->name)
+                            ->method('createTablenameFromInterface')
+                            ->with(Tablenames::tl_testtabse)
                             ->willReturn($this->tablename);
 
         $this->dbNameFactory->expects(self::once())
-                            ->method('createFieldnameFromString')
-                            ->with(Fieldnames::id->name)
+                            ->method('createFieldnameFromInterface')
+                            ->with(Fieldnames::id)
                             ->willReturn($this->fieldname);
 
         $this->dbHelepr->expects(self::once())
