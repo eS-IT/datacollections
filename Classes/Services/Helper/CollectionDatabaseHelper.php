@@ -115,7 +115,7 @@ class CollectionDatabaseHelper
      * @param int                 $offset
      * @param int                 $limit
      *
-     * @return AbstractDatabaseRowCollection|null
+     * @return ArrayCollection|null
      *
      * @throws Exception
      */
@@ -193,7 +193,7 @@ class CollectionDatabaseHelper
      * @param int                      $offset
      * @param int                      $limit
      *
-     * @return AbstractDatabaseRowCollection|null
+     * @return ArrayCollection|null
      *
      * @throws Exception
      */
