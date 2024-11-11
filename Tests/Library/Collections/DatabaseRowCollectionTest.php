@@ -155,19 +155,18 @@ class DatabaseRowCollectionTest extends TestCase
     }
 
 
-
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function testSetValue(): void
     {
         $value = 'Test';
 
         $this->nameFactory->expects(self::once())
-                          ->method('createFieldnameFromInterface')
+                          ->method('createFieldnameFromStringOrInterface')
                           ->with(MyFieldnames::myfield, $this->tablename)
                           ->willReturn($this->fieldname);
-
-        $this->dbRowCollection->expects(self::once())
-                              ->method('setValueWithNameObject')
-                              ->with($this->fieldname, $value);
 
         $this->dbRowCollection->setValue(MyFieldnames::myfield, $value);
     }

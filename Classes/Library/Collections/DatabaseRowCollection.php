@@ -22,7 +22,6 @@ use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
 use Esit\Valueobjects\Classes\Database\Enums\FieldnamesInterface;
 use Esit\Valueobjects\Classes\Database\Services\Factories\DatabasenameFactory;
-use Esit\Valueobjects\Classes\Database\Valueobjects\FieldnameValue;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
 
 class DatabaseRowCollection extends AbstractDatabaseRowCollection
@@ -65,13 +64,13 @@ class DatabaseRowCollection extends AbstractDatabaseRowCollection
      * Gibt einen Wert zurück. Der Schlüssel muss als FieldnamesInterface
      * übergeben werden und wird in ein FieldnameValue umgewandelt.
      *
-     * @param FieldnamesInterface $key
+     * @param FieldnamesInterface|string $key
      *
      * @return mixed
      *
      * @throws \Doctrine\DBAL\Exception
      */
-    public function getValue(FieldnamesInterface $key): mixed
+    public function getValue(FieldnamesInterface|string $key): mixed
     {
         $keyValue = $this->nameFactory->createFieldnameFromInterface($key, $this->tablename);
 
@@ -83,16 +82,16 @@ class DatabaseRowCollection extends AbstractDatabaseRowCollection
      * Setzt einen Wert. Der Schlüssel muss als FieldnamesInterface
      * übergeben werden und wird in ein FieldnameValue umgewandelt.
      *
-     * @param FieldnamesInterface $key
-     * @param mixed               $value
+     * @param FieldnamesInterface|string $key
+     * @param mixed                      $value
      *
      * @return void
      *
      * @throws \Doctrine\DBAL\Exception
      */
-    public function setValue(FieldnamesInterface $key, mixed $value): void
+    public function setValue(FieldnamesInterface|string $key, mixed $value): void
     {
-        $keyValue = $this->nameFactory->createFieldnameFromInterface($key, $this->tablename);
+        $keyValue = $this->nameFactory->createFieldnameFromStringOrInterface($key, $this->tablename);
 
         $this->setValueWithNameObject($keyValue, $value);
     }
