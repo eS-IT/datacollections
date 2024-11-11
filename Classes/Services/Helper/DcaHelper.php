@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace Esit\Datacollections\Classes\Services\Helper;
 
+use Esit\Ctoadapter\Classes\Services\Adapter\Controller;
 use Esit\Datacollections\Classes\Enums\DcaConfig;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
@@ -31,6 +32,14 @@ class DcaHelper
      * @var CollectionFactory
      */
     private CollectionFactory $collectionFactory;
+
+
+    /**
+     * @param Controller $controller
+     */
+    public function __construct(private readonly Controller $controller)
+    {
+    }
 
 
     /**
@@ -54,6 +63,8 @@ class DcaHelper
      */
     public function getDepandancies(TablenameValue $tablename, FieldnameValue $fieldname): ?ArrayCollection
     {
+        $this->controller->loadDataContainer($tablename->value());
+
         if (!empty($GLOBALS[DcaConfig::TL_DCA->name][$tablename->value()][DcaConfig::fields->name])) {
             $dcaField = $GLOBALS[DcaConfig::TL_DCA->name][$tablename->value()][DcaConfig::fields->name];
 

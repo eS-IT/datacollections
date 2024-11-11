@@ -12,28 +12,53 @@ declare(strict_types=1);
 
 namespace Esit\Datacollections\Tests\Services\Helper;
 
+use Esit\Ctoadapter\Classes\Services\Adapter\Controller;
 use Esit\Datacollections\Classes\Enums\DcaConfig;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\DcaHelper;
 use Esit\Valueobjects\Classes\Database\Valueobjects\FieldnameValue;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class DcaHelperTest extends TestCase
 {
 
+
+    /**
+     * @var (CollectionFactory&MockObject)|MockObject
+     */
     private $collectionFactory;
 
+
+    /**
+     * @var (TablenameValue&MockObject)|MockObject
+     */
     private $table;
 
 
+    /**
+     * @var (FieldnameValue&MockObject)|MockObject
+     */
     private $field;
 
 
+    /**
+     * @var (ArrayCollection&MockObject)|MockObject
+     */
     private $arrayCollection;
 
 
+    /**
+     * @var (Controller&MockObject)|MockObject
+     */
+    private $controller;
+
+
+    /**
+     * @var DcaHelper
+     */
     private $helper;
 
 
@@ -56,7 +81,12 @@ class DcaHelperTest extends TestCase
                                            ->disableOriginalConstructor()
                                            ->getMock();
 
-        $this->helper               = new DcaHelper();
+        $this->controller           = $this->getMockBuilder(Controller::class)
+                                           ->disableOriginalConstructor()
+                                           ->addMethods(['loadDataContainer'])
+                                           ->getMock();
+
+        $this->helper               = new DcaHelper($this->controller);
 
         $this->helper->setCollectionFactory($this->collectionFactory);
     }
@@ -67,7 +97,11 @@ class DcaHelperTest extends TestCase
         $tablename = 'tl_testtable';
         unset($GLOBALS[DcaConfig::TL_DCA->name]);
 
-        $this->table->expects(self::once())
+        $this->controller->expects(self::once())
+                         ->method('loadDataContainer')
+                         ->with($tablename);
+
+        $this->table->expects(self::exactly(2))
                     ->method('value')
                     ->willReturn($tablename);
 
@@ -87,7 +121,11 @@ class DcaHelperTest extends TestCase
         unset($GLOBALS[DcaConfig::TL_DCA->name]);
         $GLOBALS[DcaConfig::TL_DCA->name]['tl_files']['config'] = ['testConfig'];
 
-        $this->table->expects(self::once())
+        $this->controller->expects(self::once())
+                         ->method('loadDataContainer')
+                         ->with($tablename);
+
+        $this->table->expects(self::exactly(2))
                     ->method('value')
                     ->willReturn($tablename);
 
@@ -108,7 +146,11 @@ class DcaHelperTest extends TestCase
         unset($GLOBALS[DcaConfig::TL_DCA->name]);
         $GLOBALS[DcaConfig::TL_DCA->name][$tablename][$fieldname]['palettes'] = '{title_legend},title;';
 
-        $this->table->expects(self::once())
+        $this->controller->expects(self::once())
+                         ->method('loadDataContainer')
+                         ->with($tablename);
+
+        $this->table->expects(self::exactly(2))
                     ->method('value')
                     ->willReturn($tablename);
 
@@ -130,7 +172,11 @@ class DcaHelperTest extends TestCase
 
         $GLOBALS[DcaConfig::TL_DCA->name][$tablename][DcaConfig::fields->name] = [];
 
-        $this->table->expects(self::once())
+        $this->controller->expects(self::once())
+                         ->method('loadDataContainer')
+                         ->with($tablename);
+
+        $this->table->expects(self::exactly(2))
                     ->method('value')
                     ->willReturn($tablename);
 
@@ -155,7 +201,11 @@ class DcaHelperTest extends TestCase
             'label' => ['Test'],
         ];
 
-        $this->table->expects(self::exactly(2))
+        $this->controller->expects(self::once())
+                         ->method('loadDataContainer')
+                         ->with($tablename);
+
+        $this->table->expects(self::exactly(3))
                     ->method('value')
                     ->willReturn($tablename);
 
@@ -183,9 +233,14 @@ class DcaHelperTest extends TestCase
         unset($GLOBALS[DcaConfig::TL_DCA->name]);
         $GLOBALS[DcaConfig::TL_DCA->name][$tablename][DcaConfig::fields->name][$fieldname] = [
             'label'                         => ['Test'],
-            DcaConfig::lazyloading->name    => $lazyLoading];
+            DcaConfig::lazyloading->name    => $lazyLoading
+        ];
 
-        $this->table->expects(self::exactly(2))
+        $this->controller->expects(self::once())
+                         ->method('loadDataContainer')
+                         ->with($tablename);
+
+        $this->table->expects(self::exactly(3))
                     ->method('value')
                     ->willReturn($tablename);
 
