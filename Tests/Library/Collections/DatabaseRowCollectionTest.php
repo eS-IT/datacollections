@@ -140,7 +140,7 @@ class DatabaseRowCollectionTest extends TestCase
         $value = 'Test';
 
         $this->nameFactory->expects(self::once())
-                          ->method('createFieldnameFromInterface')
+                          ->method('createFieldnameFromStringOrInterface')
                           ->with(MyFieldnames::myfield, $this->tablename)
                           ->willReturn($this->fieldname);
 

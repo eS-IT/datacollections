@@ -72,7 +72,7 @@ class DatabaseRowCollection extends AbstractDatabaseRowCollection
      */
     public function getValue(FieldnamesInterface|string $key): mixed
     {
-        $keyValue = $this->nameFactory->createFieldnameFromInterface($key, $this->tablename);
+        $keyValue = $this->nameFactory->createFieldnameFromStringOrInterface($key, $this->tablename);
 
         return $this->getValueFromNameObject($keyValue);
     }
