@@ -29,6 +29,15 @@ class DatabaseRowCollection extends AbstractDatabaseRowCollection
 
 
     /**
+     * Allgemeine Daten, die nicht aus der Datenbank stammen,
+     * aber z. B. für die Ausgabe o.ä. benötigt werden.
+     *
+     * @var ArrayCollection
+     */
+    private ArrayCollection $commonData;
+
+
+    /**
      * @param DatabasenameFactory   $nameFactory
      * @param CollectionFactory     $collectionFactory
      * @param SerializeHelper       $serializeHelper
@@ -57,6 +66,8 @@ class DatabaseRowCollection extends AbstractDatabaseRowCollection
             $this->tablename,
             $data
         );
+
+        $this->commonData = $this->collectionFactory->createArrayCollection();
     }
 
 
@@ -94,5 +105,41 @@ class DatabaseRowCollection extends AbstractDatabaseRowCollection
         $keyValue = $this->nameFactory->createFieldnameFromStringOrInterface($key, $this->tablename);
 
         $this->setValueWithNameObject($keyValue, $value);
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getCommonDataAsArray(): array
+    {
+        return $this->commonData->toArray();
+    }
+
+
+    /**
+     * Gibt einen Wert aus den allgemeinen Daten zurück.
+     *
+     * @param string|int $key
+     *
+     * @return mixed
+     */
+    public function getCommonValue(string|int $key): mixed
+    {
+        return $this->commonData->getValue($key);
+    }
+
+
+    /**
+     * Speichert einen Wert in den allgemeinen Daten.
+     *
+     * @param string|int $key
+     * @param mixed      $commonData
+     *
+     * @return void
+     */
+    public function setCommonValue(string|int $key, mixed $commonData): void
+    {
+        $this->commonData->setValue($key, $commonData);
     }
 }

@@ -14,6 +14,7 @@ namespace Esit\Datacollections\Tests\Library\Collections;
 
 use Esit\Databaselayer\Classes\Services\Helper\DatabaseHelper;
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
+use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
@@ -74,7 +75,17 @@ class DatabaseRowCollectionTest extends TestCase
      */
     private $tablename;
 
+
+    /**
+     * @var (FieldnameValue&MockObject)|MockObject
+     */
     private $fieldname;
+
+
+    /**
+     * @var (ArrayCollection&MockObject)|MockObject
+     */
+    private $commonData;
 
 
     /**
@@ -117,6 +128,14 @@ class DatabaseRowCollectionTest extends TestCase
                                            ->disableOriginalConstructor()
                                            ->getMock();
 
+        $this->commonData           = $this->getMockBuilder(ArrayCollection::class)
+                                           ->disableOriginalConstructor()
+                                           ->getMock();
+
+        $this->collectionFactory->expects(self::exactly(2))
+                                ->method('createArrayCollection')
+                                ->willReturn($this->commonData);
+
         $this->dbRowCollection      = $this->getMockBuilder(DatabaseRowCollection::class)
                                            ->setConstructorArgs([
                                                $this->nameFactory,
@@ -126,7 +145,8 @@ class DatabaseRowCollectionTest extends TestCase
                                                $this->databaseHelper,
                                                $this->loadHelper,
                                                $this->tablename
-                                           ])->onlyMethods(['getValueFromNameObject', 'setValueWithNameObject'])
+                                           ])
+                                           ->onlyMethods(['getValueFromNameObject', 'setValueWithNameObject'])
                                            ->getMock();
     }
 
@@ -169,5 +189,43 @@ class DatabaseRowCollectionTest extends TestCase
                           ->willReturn($this->fieldname);
 
         $this->dbRowCollection->setValue(MyFieldnames::myfield, $value);
+    }
+
+    public function testGetCommonDataAsArray(): void
+    {
+        $expected = ['TestKey' => 'TestValue'];
+
+        $this->commonData->expects(self::once())
+                         ->method('toArray')
+                         ->willReturn($expected);
+
+        $this->assertSame($expected, $this->dbRowCollection->getCommonDataAsArray());
+    }
+
+
+    public function testGetCommonData(): void
+    {
+        $key    = 'TestKey';
+        $value  = 'TestValue';
+
+        $this->commonData->expects(self::once())
+                         ->method('getValue')
+                         ->with($key)
+                         ->willReturn($value);
+
+        $this->assertSame($value, $this->dbRowCollection->getCommonValue($key));
+    }
+
+
+    public function testSetCommonData(): void
+    {
+        $key    = 'TestKey';
+        $value  = 'TestValue';
+
+        $this->commonData->expects(self::once())
+                         ->method('setValue')
+                         ->with($key, $value);
+
+        $this->dbRowCollection->setCommonValue($key, $value);
     }
 }
