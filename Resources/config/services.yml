@@ -11,6 +11,8 @@ services:
     # Helper
     Esit\Datacollections\Classes\Services\Helper\CollectionDatabaseHelper: ~
 
+    Esit\Datacollections\Classes\Services\Helper\CollectionFactoryHelper: ~
+
     Esit\Datacollections\Classes\Services\Helper\ConfigurationHelper: ~
 
     Esit\Datacollections\Classes\Services\Helper\ConverterHelper: ~
