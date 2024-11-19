@@ -37,6 +37,19 @@ class CollectionFactoryHelper
 
 
     /**
+     * Erstellt eine ArrayCollection.
+     *
+     * @param array $data
+     *
+     * @return ArrayCollection
+     */
+    public function createArrayCollection(array $data = []): ArrayCollection
+    {
+        return $this->collectionFactory->createArrayCollection($data);
+    }
+
+
+    /**
      * Erzeugt aus einem TablenamesInterface und einem Datenarray eine DatabaseRowCollection.
      *
      * @param TablenamesInterface $table

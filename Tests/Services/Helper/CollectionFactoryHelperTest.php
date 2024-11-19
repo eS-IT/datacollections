@@ -97,6 +97,17 @@ class CollectionFactoryHelperTest extends TestCase
     }
 
 
+    public function testCreateArrayCollection(): void
+    {
+        $this->collectionFactory->expects(self::once())
+                                ->method('createArrayCollection')
+                                ->with($this->data)
+                                ->willReturn($this->arrayCollection);
+
+        $this->assertSame($this->arrayCollection, $this->helper->createArrayCollection($this->data));
+    }
+
+
     /**
      * @return void
      *
