@@ -115,12 +115,12 @@ class CollectionFactoryHelperTest extends TestCase
      */
     public function testCreateDatabaseRowCollection(): void
     {
-        $this->dbNameFactory->expects($this->once())
+        $this->dbNameFactory->expects(self::once())
                             ->method('createTablenameFromInterface')
                             ->with(CollectionFactoryHelperTestTablenames::test)
                             ->willReturn($this->tablenameValue);
 
-        $this->collectionFactory->expects($this->once())
+        $this->collectionFactory->expects(self::once())
                                 ->method('createDatabaseRowCollection')
                                 ->with($this->tablenameValue, $this->data)
                                 ->willReturn($this->dbRow);
@@ -138,12 +138,12 @@ class CollectionFactoryHelperTest extends TestCase
      */
     public function testCreateMultiDatabaseRowCollection(): void
     {
-        $this->dbNameFactory->expects($this->once())
+        $this->dbNameFactory->expects(self::once())
                             ->method('createTablenameFromInterface')
                             ->with(CollectionFactoryHelperTestTablenames::test)
                             ->willReturn($this->tablenameValue);
 
-        $this->collectionFactory->expects($this->once())
+        $this->collectionFactory->expects(self::once())
                                 ->method('createMultiDatabaseRowCollection')
                                 ->with($this->tablenameValue, $this->data)
                                 ->willReturn($this->arrayCollection);
