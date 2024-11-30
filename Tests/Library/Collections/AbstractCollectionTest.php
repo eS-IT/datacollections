@@ -51,6 +51,9 @@ class AbstractCollectionTest extends TestCase
     private $serializeHelper;
 
 
+    /**
+     * @var (ConverterHelper&MockObject)|MockObject
+     */
     private $converterHelper;
 
 
@@ -117,5 +120,30 @@ class AbstractCollectionTest extends TestCase
         $this->expectException(MethodNotAllowedException::class);
         $this->expectExceptionMessage($msg);
         $this->collection->get('test');
+    }
+
+    public function testCloumn(): void
+    {
+        $expected   = ['value02', 'value03', 'value04'];
+        $data       = [
+            ['test' => 'value02'],
+            ['test' => 'value03'],
+            ['test' => 'value04']
+        ];
+
+        $collection = new ConcreteCollection(
+            $this->collectionFactory,
+            $this->serializeHelper,
+            $this->converterHelper,
+            $data
+        );
+
+        $this->collectionFactory->expects($this->once())
+                                ->method('createArrayCollection')
+                                ->with($expected)
+                                ->willReturn($this->arrayCollection);
+
+        $rtn = $collection->cloumn('test');
+        $this->assertSame($this->arrayCollection, $rtn);
     }
 }

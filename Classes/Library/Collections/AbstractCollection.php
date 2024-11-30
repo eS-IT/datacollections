@@ -113,6 +113,21 @@ abstract class AbstractCollection extends ArrayCollection
     }
 
 
+    /**
+     * Implementiert die array_column-Funktion für Collections
+     *
+     * @param string $column
+     *
+     * @return AbstractCollection
+     */
+    public function cloumn(string $column): self
+    {
+        $data = \array_column($this->toArray(), $column);
+
+        return $this->collectionFactory->createArrayCollection($data);
+    }
+
+
 
     /**
      * Gibt einen Wert zurück.

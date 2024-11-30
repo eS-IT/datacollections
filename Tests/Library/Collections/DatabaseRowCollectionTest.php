@@ -132,8 +132,7 @@ class DatabaseRowCollectionTest extends TestCase
                                            ->disableOriginalConstructor()
                                            ->getMock();
 
-        $this->collectionFactory->expects(self::exactly(2))
-                                ->method('createArrayCollection')
+        $this->collectionFactory->method('createArrayCollection')
                                 ->willReturn($this->commonData);
 
         $this->dbRowCollection      = $this->getMockBuilder(DatabaseRowCollection::class)
@@ -227,5 +226,12 @@ class DatabaseRowCollectionTest extends TestCase
                          ->with($key, $value);
 
         $this->dbRowCollection->setCommonValue($key, $value);
+    }
+
+
+    public function testCreateFrom(): void
+    {
+        $rtn = $this->dbRowCollection->createFrom(['test', 'elements']);
+        $this->assertNotNull($rtn);
     }
 }

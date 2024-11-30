@@ -42,6 +42,15 @@ abstract class AbstractDatabaseRowCollection extends AbstractCollection implemen
 
 
     /**
+     * Allgemeine Daten, die nicht aus der Datenbank stammen,
+     * aber z. B. für die Ausgabe o.ä. benötigt werden.
+     *
+     * @var ArrayCollection
+     */
+    protected ArrayCollection $commonData;
+
+
+    /**
      * @param CollectionFactory     $collectionFactory
      * @param SerializeHelper       $serializeHelper
      * @param ConverterHelper       $converterHelper
@@ -67,7 +76,8 @@ abstract class AbstractDatabaseRowCollection extends AbstractCollection implemen
             $data
         );
 
-        $this->lazyData = $this->collectionFactory->createArrayCollection();
+        $this->lazyData     = $this->collectionFactory->createArrayCollection();
+        $this->commonData   = $this->collectionFactory->createArrayCollection();
     }
 
 
@@ -146,5 +156,41 @@ abstract class AbstractDatabaseRowCollection extends AbstractCollection implemen
         }
 
         $this->handleValue($key->value(), $value);
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getCommonDataAsArray(): array
+    {
+        return $this->commonData->toArray();
+    }
+
+
+    /**
+     * Gibt einen Wert aus den allgemeinen Daten zurück.
+     *
+     * @param string|int $key
+     *
+     * @return mixed
+     */
+    public function getCommonValue(string|int $key): mixed
+    {
+        return $this->commonData->getValue($key);
+    }
+
+
+    /**
+     * Speichert einen Wert in den allgemeinen Daten.
+     *
+     * @param string|int $key
+     * @param mixed      $commonData
+     *
+     * @return void
+     */
+    public function setCommonValue(string|int $key, mixed $commonData): void
+    {
+        $this->commonData->setValue($key, $commonData);
     }
 }
