@@ -20,12 +20,18 @@ use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
 use Esit\Datacollections\EsitTestCase;
+use Esit\Valueobjects\Classes\Database\Enums\TablenamesInterface;
 use Esit\Valueobjects\Classes\Database\Valueobjects\FieldnameValue;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class ConcreteDatabaseRowCollection extends AbstractDatabaseRowCollection
 {
+}
+
+enum Tablenames implements TablenamesInterface
+{
+    case tl_test;
 }
 
 class AbstractDatabaseRowCollectionTest extends EsitTestCase
@@ -42,6 +48,12 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
      * @var (ArrayCollection&MockObject)|MockObject
      */
     private $lazyData;
+
+
+    /**
+     * @var (ArrayCollection&MockObject)|MockObject
+     */
+    private $childData;
 
 
     /**
@@ -102,6 +114,10 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
                                            ->getMock();
 
         $this->lazyValue            = $this->getMockBuilder(ArrayCollection::class)
+                                           ->disableOriginalConstructor()
+                                           ->getMock();
+
+        $this->childData            = $this->getMockBuilder(ArrayCollection::class)
                                            ->disableOriginalConstructor()
                                            ->getMock();
 

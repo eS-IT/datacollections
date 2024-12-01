@@ -30,4 +30,6 @@ enum DcaConfig
     case field;
 
     case serialised;
+
+    case config;
 }

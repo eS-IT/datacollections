@@ -61,6 +61,28 @@ class DatabaseRowCollection extends AbstractDatabaseRowCollection
 
 
     /**
+     * {@inheritDoc}
+     *
+     * @param array $elements
+     *
+     * @return $this
+     */
+    public function createFrom(array $elements): self
+    {
+        return new static(
+            $this->nameFactory,
+            $this->collectionFactory,
+            $this->serializeHelper,
+            $this->converterHelper,
+            $this->databaseHelper,
+            $this->loadHelper,
+            $this->tablename,
+            $elements
+        );
+    }
+
+
+    /**
      * Gibt einen Wert zurück. Der Schlüssel muss als FieldnamesInterface
      * übergeben werden und wird in ein FieldnameValue umgewandelt.
      *
@@ -94,27 +116,5 @@ class DatabaseRowCollection extends AbstractDatabaseRowCollection
         $keyValue = $this->nameFactory->createFieldnameFromStringOrInterface($key, $this->tablename);
 
         $this->setValueWithNameObject($keyValue, $value);
-    }
-
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param array $elements
-     *
-     * @return $this
-     */
-    public function createFrom(array $elements): self
-    {
-        return new static(
-            $this->nameFactory,
-            $this->collectionFactory,
-            $this->serializeHelper,
-            $this->converterHelper,
-            $this->databaseHelper,
-            $this->loadHelper,
-            $this->tablename,
-            $elements
-        );
     }
 }

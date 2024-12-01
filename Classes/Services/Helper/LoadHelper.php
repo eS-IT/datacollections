@@ -112,4 +112,28 @@ class LoadHelper
 
         return null;
     }
+
+
+    /**
+     * Lädt mehrere Datensätze zu einer Id.
+     *
+     * @param TablenameValue $foreignTable
+     * @param FieldnameValue $foreignField
+     * @param int            $id
+     *
+     * @return ArrayCollection|null
+     *
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function loadMultipleById(
+        TablenameValue $foreignTable,
+        FieldnameValue $foreignField,
+        int $id
+    ): ?ArrayCollection {
+        $rows = $this->dbHelper->loadByValue($pid, $foreignField->value(), $foreignTable->value());
+
+        if (!empty($rows)) {
+            return $this->collectionFactory->createMultiDatabaseRowCollection($foreignTable, $rows);
+        }
+    }
 }

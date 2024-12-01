@@ -18,6 +18,7 @@ namespace Esit\Datacollections\Classes\Services\Helper;
 use Esit\Datacollections\Classes\Library\Collections\AbstractDatabaseRowCollection;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
+use Esit\Valueobjects\Classes\Database\Enums\TablenamesInterface;
 use Esit\Valueobjects\Classes\Database\Valueobjects\FieldnameValue;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
 
@@ -77,6 +78,29 @@ class LazyLoadHelper
 
                 return $this->loadHelper->loadOne($foreignTable, $foreignField, $value);
             }
+        }
+
+        return null;
+    }
+
+
+    /**
+     * Lädt die Kinddatensätze zu diesem Datensatz.
+     *
+     * @param TablenamesInterface $table
+     * @param int                 $pid
+     *
+     * @return ArrayCollection|null
+     *
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function loadChildData(TablenamesInterface $table, int $pid): ?ArrayCollection
+    {
+        $tablename = $this->configHelper->getChildTable($table);
+        $filedname = $this->configHelper->getChildField($tablename);
+
+        if (null !== $filedname) {
+            return $this->loadHelper->loadMultipleById($tablename, $filedname, $pid);
         }
 
         return null;

@@ -17,6 +17,7 @@ namespace Esit\Datacollections\Classes\Services\Helper;
 
 use Esit\Datacollections\Classes\Enums\DcaConfig;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
+use Esit\Valueobjects\Classes\Database\Enums\TablenamesInterface;
 use Esit\Valueobjects\Classes\Database\Services\Factories\DatabasenameFactory;
 use Esit\Valueobjects\Classes\Database\Valueobjects\FieldnameValue;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
@@ -123,5 +124,42 @@ class ConfigurationHelper
         }
 
         return true === (bool) $config->getValue(DcaConfig::serialised->name);
+    }
+
+
+    /**
+     * Gibt das Feld mit der Eltern-Id in der Kindtabelle zurück.
+     *
+     * @param TablenameValue $tablename
+     *
+     * @return FieldnameValue|null
+     *
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function getChildField(TablenameValue $tablename): ?FieldnameValue
+    {
+        $fieldname = $this->dcaHelper->getChildDepandancies($tablename);
+
+        if (empty($fieldname)) {
+            return null;
+        }
+
+        return $this->nameFactory->createFieldnameFromString($fieldname, $tablename);
+    }
+
+
+    /**
+     * Gibt den TablenameValue für die Kindtabelle zurück.
+     * Wird beim LazyLoading der Kinddtaten verwendet.
+     *
+     * @param TablenamesInterface $tablename
+     *
+     * @return TablenameValue
+     *
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function getChildTable(TablenamesInterface $tablename)
+    {
+        return $this->nameFactory->createTablenameFromInterface($tablename);
     }
 }

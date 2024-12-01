@@ -79,4 +79,18 @@ class DcaHelper
 
         return null;
     }
+
+
+    public function getChildDepandancies(TablenameValue $tablename): string
+    {
+        $this->controller->loadDataContainer($tablename->value());
+
+        if (!empty($GLOBALS[DcaConfig::TL_DCA->name][$tablename->value()][DcaConfig::config->name])) {
+            $config = $GLOBALS[DcaConfig::TL_DCA->name][$tablename->value()][DcaConfig::config->name];
+
+            return $config[DcaConfig::lazyloading->name][$tablename->value()] ?? '';
+        }
+
+        return '';
+    }
 }

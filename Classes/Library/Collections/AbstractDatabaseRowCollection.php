@@ -20,6 +20,7 @@ use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
+use Esit\Valueobjects\Classes\Database\Enums\TablenamesInterface;
 use Esit\Valueobjects\Classes\Database\Valueobjects\FieldnameValue;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
 
@@ -48,6 +49,15 @@ abstract class AbstractDatabaseRowCollection extends AbstractCollection implemen
      * @var ArrayCollection
      */
     protected ArrayCollection $commonData;
+
+
+    /**
+     * Diese ArrayCollection enthält je eine ArrayCollection mit den DatabaseRowCollections
+     * der Kinddatensätze pro Eltern-Kind-Beziehung.
+     *
+     * @var ArrayCollection
+     */
+    protected ArrayCollection $childData;
 
 
     /**
@@ -192,5 +202,28 @@ abstract class AbstractDatabaseRowCollection extends AbstractCollection implemen
     public function setCommonValue(string|int $key, mixed $commonData): void
     {
         $this->commonData->setValue($key, $commonData);
+    }
+
+
+    /**
+     * Lädt die Kinddatensätze anhand der Id dieses Datensatzes und der im DCA definierten Kindtabelle.
+     *
+     * @param TablenamesInterface $table
+     *
+     * @return ArrayCollection|null
+     */
+    public function getChildData(TablenamesInterface $table): ?ArrayCollection
+    {
+        if (true === $this->childData->contains($table)) {
+            return $this->childData->getValue($table->name);
+        }
+
+        $lazyValues = $this->loadHelper->loadChildData($table, (int) $this->returnValue('id'));
+
+        if (null !== $lazyValues) {
+            $this->childData->setValue($table->name, $lazyValues);
+        }
+
+        return $lazyValues;
     }
 }
