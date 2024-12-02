@@ -255,4 +255,182 @@ class DcaHelperTest extends TestCase
 
         $this->assertSame($this->arrayCollection, $this->helper->getDepandancies($this->table, $this->field));
     }
+
+
+    public function testGetChildDepandanciesReturnEmptyStringIfDcaIsNotSet(): void
+    {
+        $tablename      = 'tl_testtable';
+
+        unset($GLOBALS[DcaConfig::TL_DCA->name]);
+
+        $this->table->expects(self::exactly(2))
+                    ->method('value')
+                    ->willReturn($tablename);
+
+        $this->controller->expects(self::once())
+                         ->method('loadDataContainer')
+                         ->with($tablename);
+
+        $this->assertEmpty($this->helper->getChildDepandancies($this->table, $this->table));
+    }
+
+
+    public function testGetChildDepandanciesReturnEmptyStringIfTableIsNotSet(): void
+    {
+        $tablename      = 'tl_testtable';
+        $childTablename = 'tl_childtesttable';
+
+        unset($GLOBALS[DcaConfig::TL_DCA->name]);
+
+        $GLOBALS[DcaConfig::TL_DCA->name] = [
+            $tablename . '_NOT' => [
+                DcaConfig::config->name => [
+                    DcaConfig::lazyloading->name => [
+                        $childTablename => ['data']
+                    ]
+                ]
+            ]
+        ];
+
+        $this->table->expects(self::exactly(2))
+                    ->method('value')
+                    ->willReturn($tablename);
+
+        $this->controller->expects(self::once())
+                         ->method('loadDataContainer')
+                         ->with($tablename);
+
+        $this->assertEmpty($this->helper->getChildDepandancies($this->table, $this->table)); //table auch child!
+    }
+
+
+    public function testGetChildDepandanciesReturnEmptyStringIfConfigIsNotSet(): void
+    {
+        $tablename = 'tl_testtable';
+        $childTablename = 'tl_childtesttable';
+
+        unset($GLOBALS[DcaConfig::TL_DCA->name]);
+
+        $GLOBALS[DcaConfig::TL_DCA->name] = [
+            $tablename => [
+                DcaConfig::config->name . '_NOT' => [
+                    DcaConfig::lazyloading->name => [
+                        $childTablename => ['data']
+                    ]
+                ]
+            ]
+        ];
+
+        $this->table->expects(self::exactly(2))
+                    ->method('value')
+                    ->willReturn($tablename);
+
+        $this->controller->expects(self::once())
+                         ->method('loadDataContainer')
+                         ->with($tablename);
+
+        $this->assertEmpty($this->helper->getChildDepandancies($this->table, $this->table)); //table auch child!
+    }
+
+
+    public function testGetChildDepandanciesReturnEmptyStringIfLazyLoadingIsNotSet(): void
+    {
+        $tablename = 'tl_testtable';
+        $childTablename = 'tl_childtesttable';
+
+        unset($GLOBALS[DcaConfig::TL_DCA->name]);
+
+        $GLOBALS[DcaConfig::TL_DCA->name] = [
+            $tablename => [
+                DcaConfig::config->name => [
+                    DcaConfig::lazyloading->name . '_NOT' => [
+                        $childTablename => ['data']
+                    ]
+                ]
+            ]
+        ];
+
+        $this->table->expects(self::exactly(4))
+                    ->method('value')
+                    ->willReturnOnConsecutiveCalls(
+                        $tablename,
+                        $tablename,
+                        $tablename,
+                        $childTablename
+                    );
+
+        $this->controller->expects(self::once())
+                         ->method('loadDataContainer')
+                         ->with($tablename);
+
+        $this->assertEmpty($this->helper->getChildDepandancies($this->table, $this->table)); //table auch child!
+    }
+
+
+    public function testGetChildDepandanciesReturnEmptyStringIfChildtableIsNotSet(): void
+    {
+        $tablename = 'tl_testtable';
+        $childTablename = 'tl_childtesttable';
+
+        unset($GLOBALS[DcaConfig::TL_DCA->name]);
+
+        $GLOBALS[DcaConfig::TL_DCA->name] = [
+            $tablename => [
+                DcaConfig::config->name => [
+                    DcaConfig::lazyloading->name => [
+                        $childTablename . '_NOT' => ['data']
+                    ]
+                ]
+            ]
+        ];
+
+        $this->table->expects(self::exactly(4))
+                    ->method('value')
+                    ->willReturnOnConsecutiveCalls(
+                        $tablename,
+                        $tablename,
+                        $tablename,
+                        $childTablename
+                    );
+
+        $this->controller->expects(self::once())
+                         ->method('loadDataContainer')
+                         ->with($tablename);
+
+        $this->assertEmpty($this->helper->getChildDepandancies($this->table, $this->table)); //table auch child!
+    }
+
+
+    public function testGetChildDepandanciesReturnStringIfChildtableIsSet(): void
+    {
+        $tablename = 'tl_testtable';
+        $childTablename = 'tl_childtesttable';
+
+        unset($GLOBALS[DcaConfig::TL_DCA->name]);
+
+        $GLOBALS[DcaConfig::TL_DCA->name] = [
+            $tablename => [
+                DcaConfig::config->name => [
+                    DcaConfig::lazyloading->name => [
+                        $childTablename => 'data'
+                    ]
+                ]
+            ]
+        ];
+
+        $this->table->expects(self::exactly(4))
+                    ->method('value')
+                    ->willReturnOnConsecutiveCalls(
+                        $tablename,
+                        $tablename,
+                        $tablename,
+                        $childTablename
+                    );
+
+        $this->controller->expects(self::once())
+                         ->method('loadDataContainer')
+                         ->with($tablename);
+
+        $this->assertSame('data', $this->helper->getChildDepandancies($this->table, $this->table)); //table auch child!
+    }
 }

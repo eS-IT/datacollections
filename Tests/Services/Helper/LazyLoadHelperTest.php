@@ -300,4 +300,56 @@ class LazyLoadHelperTest extends TestCase
 
         $this->assertSame($this->arrayCollection, $this->helper->loadData($this->tablename, $this->fieldname, $value));
     }
+
+
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testLoadChildDataReturnNullIfFieldIsNotSet(): void
+    {
+        $pid = 12;
+
+        $this->configHelper->expects(self::once())
+                           ->method('getChildTable')
+                           ->with(MyTablenames::tl_test)
+                           ->willReturn($this->tablename);
+
+        $this->configHelper->expects(self::once())
+                           ->method('getChildField')
+                           ->with(MyTablenames::tl_test, $this->tablename)
+                           ->willReturn(null);
+
+        $this->loadHelper->expects(self::never())
+                         ->method('loadMultipleById');
+
+        $this->assertNull($this->helper->loadChildData(MyTablenames::tl_test, $pid));
+    }
+
+
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testLoadChildDataReturnArrayCollectionsIfFieldIsSet(): void
+    {
+        $pid = 12;
+
+        $this->configHelper->expects(self::once())
+                           ->method('getChildTable')
+                           ->with(MyTablenames::tl_test)
+                           ->willReturn($this->tablename);
+
+        $this->configHelper->expects(self::once())
+                           ->method('getChildField')
+                           ->with(MyTablenames::tl_test, $this->tablename)
+                           ->willReturn($this->fieldname);
+
+        $this->loadHelper->expects(self::once())
+                         ->method('loadMultipleById')
+                         ->with($this->tablename, $this->fieldname, $pid)
+                         ->willReturn($this->arrayCollection);
+
+        $this->assertSame($this->arrayCollection, $this->helper->loadChildData(MyTablenames::tl_test, $pid));
+    }
 }

@@ -51,20 +51,9 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
 
 
     /**
-     * @var (ArrayCollection&MockObject)|MockObject
-     */
-    private $childData;
-
-
-    /**
      * @var (AbstractDatabaseRowCollection&MockObject)|MockObject
      */
     private $lazyValue;
-
-    /**
-     * @var (DatabaseHelper&MockObject)|MockObject
-     */
-    private $databaseHelper;
 
 
     /**
@@ -152,36 +141,9 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
             $this->collectionFactory,
             $this->serializeHelper,
             $this->convterHelper,
-            $this->databaseHelper,
             $this->loadHelper,
             $this->tablename
         );
-    }
-
-
-    public function testGetTable(): void
-    {
-        $this->assertSame($this->tablename, $this->collection->getTable());
-    }
-
-
-    /**
-     * @return void
-     * @throws \Doctrine\DBAL\Exception
-     */
-    public function testSave(): void
-    {
-        $table = 'tl_test';
-
-        $this->tablename->expects(self::once())
-                        ->method('value')
-                        ->willReturn($table);
-
-        $this->databaseHelper->expects(self::once())
-                             ->method('save')
-                             ->with($table, []);
-
-        $this->collection->save();
     }
 
 
@@ -362,7 +324,7 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
     }
 
 
-    public function testSetValue(): void
+    public function testSetValueWithNameObjectReturnValue(): void
     {
         $key    = 'testfield';
         $value  = 'testvalue';

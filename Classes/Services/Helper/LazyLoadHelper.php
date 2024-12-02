@@ -96,13 +96,13 @@ class LazyLoadHelper
      */
     public function loadChildData(TablenamesInterface $table, int $pid): ?ArrayCollection
     {
-        $tablename = $this->configHelper->getChildTable($table);
-        $filedname = $this->configHelper->getChildField($tablename);
+        $childtablename = $this->configHelper->getChildTable($table);
+        $filedname      = $this->configHelper->getChildField($table, $childtablename);
 
-        if (null !== $filedname) {
-            return $this->loadHelper->loadMultipleById($tablename, $filedname, $pid);
+        if (null === $filedname) {
+            return null;
         }
 
-        return null;
+        return $this->loadHelper->loadMultipleById($childtablename, $filedname, $pid);
     }
 }

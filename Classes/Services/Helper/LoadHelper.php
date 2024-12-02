@@ -119,7 +119,7 @@ class LoadHelper
      *
      * @param TablenameValue $foreignTable
      * @param FieldnameValue $foreignField
-     * @param int            $id
+     * @param int            $pid
      *
      * @return ArrayCollection|null
      *
@@ -128,12 +128,14 @@ class LoadHelper
     public function loadMultipleById(
         TablenameValue $foreignTable,
         FieldnameValue $foreignField,
-        int $id
+        int $pid
     ): ?ArrayCollection {
         $rows = $this->dbHelper->loadByValue($pid, $foreignField->value(), $foreignTable->value());
 
-        if (!empty($rows)) {
-            return $this->collectionFactory->createMultiDatabaseRowCollection($foreignTable, $rows);
+        if (empty($rows)) {
+            return null;
         }
+
+        return $this->collectionFactory->createMultiDatabaseRowCollection($foreignTable, $rows);
     }
 }

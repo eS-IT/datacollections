@@ -81,14 +81,22 @@ class DcaHelper
     }
 
 
-    public function getChildDepandancies(TablenameValue $tablename): string
+    /**
+     * Gibt den Namen des Felds mit der Eltern-Id in der Kindtabelle zurück.
+     *
+     * @param TablenameValue $tablename
+     * @param TablenameValue $childtablename
+     *
+     * @return string
+     */
+    public function getChildDepandancies(TablenameValue $tablename, TablenameValue $childtablename): string
     {
         $this->controller->loadDataContainer($tablename->value());
 
         if (!empty($GLOBALS[DcaConfig::TL_DCA->name][$tablename->value()][DcaConfig::config->name])) {
             $config = $GLOBALS[DcaConfig::TL_DCA->name][$tablename->value()][DcaConfig::config->name];
 
-            return $config[DcaConfig::lazyloading->name][$tablename->value()] ?? '';
+            return $config[DcaConfig::lazyloading->name][$childtablename->value()] ?? '';
         }
 
         return '';

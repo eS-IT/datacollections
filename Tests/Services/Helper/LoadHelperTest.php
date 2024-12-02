@@ -15,7 +15,6 @@ namespace Esit\Datacollections\Tests\Services\Helper;
 use Esit\Databaselayer\Classes\Services\Helper\DatabaseHelper;
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
-use Esit\Datacollections\Classes\Library\Collections\AbstractDatabaseRowCollection;
 use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\LoadHelper;
@@ -278,6 +277,71 @@ class LoadHelperTest extends TestCase
                                 ->willReturn($this->arrayCollecttion);
 
         $rtn = $this->helper->loadMultiple($this->tablename, $this->fieldname, $value);
+        $this->assertSame($this->arrayCollecttion, $rtn);
+    }
+
+
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testLoadMultipleByIdReturnNullIfNoDataFound(): void
+    {
+        $pid    = 12;
+        $field  = 'testfield';
+        $table  = 'tl_testtable';
+        $rows   = [];
+
+        $this->fieldname->expects(self::once())
+                        ->method('value')
+                        ->willReturn($field);
+
+        $this->tablename->expects(self::once())
+                        ->method('value')
+                        ->willReturn($table);
+
+        $this->dbHelper->expects(self::once())
+                       ->method('loadByValue')
+                       ->with($pid, $field, $table)
+                       ->willReturn($rows);
+
+        $this->collectionFactory->expects(self::never())
+                                ->method('createMultiDatabaseRowCollection');
+
+        $this->assertNull($this->helper->loadMultipleById($this->tablename, $this->fieldname, $pid));
+    }
+
+
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testLoadMultipleByIdReturnArrayCollectionsIfDataFound(): void
+    {
+        $pid    = 12;
+        $field  = 'testfield';
+        $table  = 'tl_testtable';
+        $rows   = [['testData1'], ['testData2'], ['testData3'], ['testData4']];
+
+        $this->fieldname->expects(self::once())
+                        ->method('value')
+                        ->willReturn($field);
+
+        $this->tablename->expects(self::once())
+                        ->method('value')
+                        ->willReturn($table);
+
+        $this->dbHelper->expects(self::once())
+                       ->method('loadByValue')
+                       ->with($pid, $field, $table)
+                       ->willReturn($rows);
+
+        $this->collectionFactory->expects(self::once())
+                                ->method('createMultiDatabaseRowCollection')
+                                ->with($this->tablename, $rows)
+                                ->willReturn($this->arrayCollecttion);
+
+        $rtn = $this->helper->loadMultipleById($this->tablename, $this->fieldname, $pid);
         $this->assertSame($this->arrayCollecttion, $rtn);
     }
 }

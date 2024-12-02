@@ -17,11 +17,18 @@ use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\ConfigurationHelper;
 use Esit\Datacollections\Classes\Services\Helper\DcaHelper;
+use Esit\Valueobjects\Classes\Database\Enums\TablenamesInterface;
 use Esit\Valueobjects\Classes\Database\Services\Factories\DatabasenameFactory;
 use Esit\Valueobjects\Classes\Database\Valueobjects\FieldnameValue;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+
+
+enum MyTablenames implements TablenamesInterface
+{
+    case tl_test;
+}
 
 class ConfigurationHelperTest extends TestCase
 {
@@ -314,5 +321,72 @@ class ConfigurationHelperTest extends TestCase
                               ->willReturn(1);
 
         $this->assertTrue($this->helper->isSerialised($this->table, $this->field));
+    }
+
+
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testGetChildFieldReturnNullIfChildFieldIsNotDefined(): void
+    {
+        $fieldname = '';
+
+        $this->nameFactory->expects(self::once())
+                          ->method('createTablenameFromInterface')
+                          ->with(MyTablenames::tl_test)
+                          ->willReturn($this->table);
+
+        $this->dcaHelper->expects(self::once())
+                        ->method('getChildDepandancies')
+                        ->with($this->table)
+                        ->willReturn($fieldname);
+
+        $this->nameFactory->expects(self::never())
+                          ->method('createFieldnameFromString');
+
+        $this->assertNull($this->helper->getChildField(MyTablenames::tl_test, $this->table));
+    }
+
+
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testGetChildFieldReturnFieldNameIfChildFieldIsDefined(): void
+    {
+        $fieldname = 'pid';
+
+        $this->nameFactory->expects(self::once())
+                          ->method('createTablenameFromInterface')
+                          ->with(MyTablenames::tl_test)
+                          ->willReturn($this->table);
+
+        $this->dcaHelper->expects(self::once())
+                        ->method('getChildDepandancies')
+                        ->with($this->table)
+                        ->willReturn($fieldname);
+
+        $this->nameFactory->expects(self::once())
+                          ->method('createFieldnameFromString')
+                          ->with($fieldname, $this->table)
+                          ->willReturn($this->field);
+
+        $this->assertSame($this->field, $this->helper->getChildField(MyTablenames::tl_test, $this->table));
+    }
+
+
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testGetChildTable(): void
+    {
+        $this->nameFactory->expects(self::once())
+                          ->method('createTablenameFromInterface')
+                          ->with(MyTablenames::tl_test)
+                          ->willReturn($this->table);
+
+        $this->assertSame($this->table, $this->helper->getChildTable(MyTablenames::tl_test));
     }
 }

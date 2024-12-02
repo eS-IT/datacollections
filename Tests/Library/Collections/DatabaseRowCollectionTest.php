@@ -20,6 +20,7 @@ use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
 use Esit\Valueobjects\Classes\Database\Enums\FieldnamesInterface;
+use Esit\Valueobjects\Classes\Database\Enums\TablenamesInterface;
 use Esit\Valueobjects\Classes\Database\Services\Factories\DatabasenameFactory;
 use Esit\Valueobjects\Classes\Database\Valueobjects\FieldnameValue;
 use Esit\Valueobjects\Classes\Database\Valueobjects\TablenameValue;
@@ -28,6 +29,10 @@ use PHPUnit\Framework\TestCase;
 
 enum MyFieldnames implements FieldnamesInterface {
     case myfield;
+}
+
+enum MyTablenames implements TablenamesInterface {
+    case tl_test;
 }
 
 class DatabaseRowCollectionTest extends TestCase
@@ -85,7 +90,13 @@ class DatabaseRowCollectionTest extends TestCase
     /**
      * @var (ArrayCollection&MockObject)|MockObject
      */
-    private $commonData;
+    private $arrayCollection;
+
+
+    /**
+     * @var (ArrayCollection&MockObject)|MockObject
+     */
+    private $childData;
 
 
     /**
@@ -128,12 +139,12 @@ class DatabaseRowCollectionTest extends TestCase
                                            ->disableOriginalConstructor()
                                            ->getMock();
 
-        $this->commonData           = $this->getMockBuilder(ArrayCollection::class)
+        $this->arrayCollection      = $this->getMockBuilder(ArrayCollection::class)
                                            ->disableOriginalConstructor()
                                            ->getMock();
 
         $this->collectionFactory->method('createArrayCollection')
-                                ->willReturn($this->commonData);
+                                ->willReturn($this->arrayCollection);
 
         $this->dbRowCollection      = $this->getMockBuilder(DatabaseRowCollection::class)
                                            ->setConstructorArgs([
@@ -147,6 +158,33 @@ class DatabaseRowCollectionTest extends TestCase
                                            ])
                                            ->onlyMethods(['getValueFromNameObject', 'setValueWithNameObject'])
                                            ->getMock();
+    }
+
+
+    public function testGetTable(): void
+    {
+        $this->assertSame($this->tablename, $this->dbRowCollection->getTable());
+    }
+
+
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testSave(): void
+    {
+        $table  = 'tl_test';
+        $id     = 12;
+        $this->tablename->expects(self::once())
+                        ->method('value')
+                        ->willReturn($table);
+
+        $this->databaseHelper->expects(self::once())
+                             ->method('save')
+                             ->with($table, [])
+                             ->willReturn($id);
+
+        $this->assertSame($id, $this->dbRowCollection->save());
     }
 
 
@@ -194,7 +232,7 @@ class DatabaseRowCollectionTest extends TestCase
     {
         $expected = ['TestKey' => 'TestValue'];
 
-        $this->commonData->expects(self::once())
+        $this->arrayCollection->expects(self::once())
                          ->method('toArray')
                          ->willReturn($expected);
 
@@ -207,7 +245,7 @@ class DatabaseRowCollectionTest extends TestCase
         $key    = 'TestKey';
         $value  = 'TestValue';
 
-        $this->commonData->expects(self::once())
+        $this->arrayCollection->expects(self::once())
                          ->method('getValue')
                          ->with($key)
                          ->willReturn($value);
@@ -221,7 +259,7 @@ class DatabaseRowCollectionTest extends TestCase
         $key    = 'TestKey';
         $value  = 'TestValue';
 
-        $this->commonData->expects(self::once())
+        $this->arrayCollection->expects(self::once())
                          ->method('setValue')
                          ->with($key, $value);
 
@@ -233,5 +271,99 @@ class DatabaseRowCollectionTest extends TestCase
     {
         $rtn = $this->dbRowCollection->createFrom(['test', 'elements']);
         $this->assertNotNull($rtn);
+    }
+
+
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testGetChildDataReturnchildDataIfIsSet(): void
+    {
+        $this->arrayCollection->expects(self::once())
+                        ->method('contains')
+                        ->with(MyTablenames::tl_test)
+                        ->willReturn(true);
+
+        $this->arrayCollection->expects(self::once())
+                        ->method('getValue')
+                        ->with(MyTablenames::tl_test->name)
+                        ->willReturn($this->arrayCollection);
+
+        $this->loadHelper->expects(self::never())
+                         ->method('loadChildData');
+
+        $this->convterHelper->expects(self::never())
+                            ->method('convertArrayToCollection');
+
+        $this->arrayCollection->expects(self::never())
+                        ->method('setValue');
+
+        $this->assertSame($this->arrayCollection, $this->dbRowCollection->getChildData(MyTablenames::tl_test));
+    }
+
+
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testGetChildDataReturnchildReturnNullIfChildDataCouldNotBeLoaded(): void
+    {
+        $id = 12;
+
+        $this->arrayCollection->expects(self::once())
+                              ->method('contains')
+                              ->with(MyTablenames::tl_test)
+                              ->willReturn(false);
+
+        $this->arrayCollection->expects(self::never())
+                              ->method('getValue');
+
+        $this->loadHelper->expects(self::once())
+                         ->method('loadChildData')
+                         ->with(MyTablenames::tl_test, $id)
+                         ->willReturn(null);
+
+        $this->convterHelper->expects(self::once())
+                            ->method('convertArrayToCollection')
+                            ->willReturn($id);
+
+        $this->arrayCollection->expects(self::never())
+                              ->method('setValue');
+
+        $this->assertNull($this->dbRowCollection->getChildData(MyTablenames::tl_test));
+    }
+
+
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testGetChildDataReturnchildReturnArrayCollectionIfChildDataCouldBeLoaded(): void
+    {
+        $id = 12;
+
+        $this->arrayCollection->expects(self::once())
+                              ->method('contains')
+                              ->with(MyTablenames::tl_test)
+                              ->willReturn(false);
+
+        $this->arrayCollection->expects(self::never())
+                              ->method('getValue');
+
+        $this->loadHelper->expects(self::once())
+                         ->method('loadChildData')
+                         ->with(MyTablenames::tl_test, $id)
+                         ->willReturn($this->arrayCollection);
+
+        $this->convterHelper->expects(self::once())
+                            ->method('convertArrayToCollection')
+                            ->willReturn($id);
+
+        $this->arrayCollection->expects(self::once())
+                              ->method('setValue')
+                              ->with(MyTablenames::tl_test->name, $this->arrayCollection);
+
+        $this->assertSame($this->arrayCollection, $this->dbRowCollection->getChildData(MyTablenames::tl_test));
     }
 }
