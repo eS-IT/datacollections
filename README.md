@@ -245,3 +245,42 @@ $GLOBALS['TL_DCA'][$table]['fields']['author'] = [
 `table` gibt die Tabelle an, aus der die Daten geladen werden sollen. `field` gibt an, in welchem Feld der Fremdtabelle
 der Wert gesucht wird und `serialised` gibt an, ob es sich um einen Werte (`false`) oder ein serialisiertes Array
 von Werten handelt (`true`).
+
+### CommonData
+
+Die `DatabaseRowCollection` kann zusätzliche Daten verwalten, die nicht in der Datenbank gespeichert werden können.
+Die ist nützlich, wenn man den Daten für die Ausgabe zusätzliche Werte mitgeben will.
+
+Es gibt zu diesem Zweck eine extra Collection, in der die zusätzlichen Daten abgelegt werden. Mit den folgenden Methoden
+kann darauf zugegriffen werden.
+
+```php
+use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
+
+class MyClass
+{
+
+    public function __construct(private readonly CollectionFactory $factory)
+    {
+    }
+
+
+    public function useDatabaseRow(): void
+    {
+        // Eine leere Collection erstellen
+        $myDbCollection = $this->factory->createDatabaseRowCollection(
+            Tablenames::tl_test_data,
+            [] // Hier können Daten als Array oder ArrayCollection übergeben werden.
+        );
+
+        // Zusätzlichen Wert berechnen und hinterlegen
+        $myDbCollection->setCommonValue('incremented_id', $myDbCollection->getValue('id') + 1);
+
+        // Zusätzlichen Wert abfragen
+        echo $myDbCollection->getCommonValue('incremented_id'); // => id + 1
+
+        // Alle zusätzlichen Werte als Array beziehen
+        $commonData = $myDbCollection->getCommonDataAsArray(); // ['incremented_id' => id + 1]
+    }
+}
+```
