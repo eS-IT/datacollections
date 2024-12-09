@@ -357,8 +357,8 @@ class CollectionDatabaseHelperTest extends EsitTestCase
                        ->method('loadByList')
                        ->with(
                            $value,
-                           Tablenames::tl_testtabse->name,
                            Fieldnames::id->name,
+                           Tablenames::tl_testtabse->name,
                            $order,
                            $offset,
                            $limit,
@@ -413,8 +413,8 @@ class CollectionDatabaseHelperTest extends EsitTestCase
                        ->method('loadByList')
                        ->with(
                            $value,
-                           Tablenames::tl_testtabse->name,
                            Fieldnames::id->name,
+                           Tablenames::tl_testtabse->name,
                            $order,
                            $offset,
                            $limit,
@@ -478,8 +478,8 @@ class CollectionDatabaseHelperTest extends EsitTestCase
                        ->method('loadByList')
                        ->with(
                            $value,
-                           Tablenames::tl_testtabse->name,
                            Fieldnames::id->name,
+                           Tablenames::tl_testtabse->name,
                            $order,
                            $offset,
                            $limit,

@@ -168,8 +168,8 @@ class CollectionDatabaseHelper
         $searchFieldname    = $this->dbNameFactory->createFieldnameFromString($searchFieldString, $tablename);
         $data               = $this->dbHelepr->loadByList(
             $valueList,
-            $tablename->value(),
             $orderFieldname->value(),
+            $tablename->value(),
             $order,
             $offset,
             $limit,
