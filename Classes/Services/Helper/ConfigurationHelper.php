@@ -130,16 +130,15 @@ class ConfigurationHelper
     /**
      * Gibt das Feld mit der Eltern-Id in der Kindtabelle zurück.
      *
-     * @param TablenamesInterface $table
+     * @param TablenamesInterface $tablename
      * @param TablenameValue      $childtablename
      *
      * @return FieldnameValue|null
      *
      * @throws \Doctrine\DBAL\Exception
      */
-    public function getChildField(TablenamesInterface $table, TablenameValue $childtablename): ?FieldnameValue
+    public function getChildField(TablenameValue $tablename, TablenameValue $childtablename): ?FieldnameValue
     {
-        $tablename  = $this->nameFactory->createTablenameFromInterface($table);
         $fieldname = $this->dcaHelper->getChildDepandancies($tablename, $childtablename);
 
         if (empty($fieldname)) {

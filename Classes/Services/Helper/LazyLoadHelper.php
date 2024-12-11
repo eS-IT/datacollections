@@ -87,16 +87,16 @@ class LazyLoadHelper
     /**
      * Lädt die Kinddatensätze zu diesem Datensatz.
      *
-     * @param TablenamesInterface $table
+     * @param TablenamesInterface $childTable
      * @param int                 $pid
      *
      * @return ArrayCollection|null
      *
      * @throws \Doctrine\DBAL\Exception
      */
-    public function loadChildData(TablenamesInterface $table, int $pid): ?ArrayCollection
+    public function loadChildData(TablenameValue $table, TablenamesInterface $childTable, int $pid): ?ArrayCollection
     {
-        $childtablename = $this->configHelper->getChildTable($table);
+        $childtablename = $this->configHelper->getChildTable($childTable);
         $filedname      = $this->configHelper->getChildField($table, $childtablename);
 
         if (null === $filedname) {

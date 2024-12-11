@@ -202,22 +202,22 @@ class DatabaseRowCollection extends AbstractDatabaseRowCollection
     /**
      * Lädt die Kinddatensätze anhand der Id dieses Datensatzes und der im DCA definierten Kindtabelle.
      *
-     * @param TablenamesInterface $table
+     * @param TablenamesInterface $childTable
      *
      * @return ArrayCollection|null
      *
      * @throws Exception
      */
-    public function getChildData(TablenamesInterface $table): ?ArrayCollection
+    public function getChildData(TablenamesInterface $childTable): ?ArrayCollection
     {
-        if (true === $this->childData->contains($table)) {
-            return $this->childData->getValue($table->name);
+        if (true === $this->childData->contains($childTable)) {
+            return $this->childData->getValue($childTable->name);
         }
 
-        $lazyValues = $this->loadHelper->loadChildData($table, (int) $this->returnValue('id'));
+        $lazyValues = $this->loadHelper->loadChildData($this->tablename, $childTable, (int) $this->returnValue('id'));
 
         if (null !== $lazyValues) {
-            $this->childData->setValue($table->name, $lazyValues);
+            $this->childData->setValue($childTable->name, $lazyValues);
         }
 
         return $lazyValues;

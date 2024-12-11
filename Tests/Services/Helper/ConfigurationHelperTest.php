@@ -332,11 +332,6 @@ class ConfigurationHelperTest extends TestCase
     {
         $fieldname = '';
 
-        $this->nameFactory->expects(self::once())
-                          ->method('createTablenameFromInterface')
-                          ->with(MyTablenames::tl_test)
-                          ->willReturn($this->table);
-
         $this->dcaHelper->expects(self::once())
                         ->method('getChildDepandancies')
                         ->with($this->table)
@@ -345,7 +340,7 @@ class ConfigurationHelperTest extends TestCase
         $this->nameFactory->expects(self::never())
                           ->method('createFieldnameFromString');
 
-        $this->assertNull($this->helper->getChildField(MyTablenames::tl_test, $this->table));
+        $this->assertNull($this->helper->getChildField($this->table, $this->table));
     }
 
 
@@ -357,11 +352,6 @@ class ConfigurationHelperTest extends TestCase
     {
         $fieldname = 'pid';
 
-        $this->nameFactory->expects(self::once())
-                          ->method('createTablenameFromInterface')
-                          ->with(MyTablenames::tl_test)
-                          ->willReturn($this->table);
-
         $this->dcaHelper->expects(self::once())
                         ->method('getChildDepandancies')
                         ->with($this->table)
@@ -372,7 +362,7 @@ class ConfigurationHelperTest extends TestCase
                           ->with($fieldname, $this->table)
                           ->willReturn($this->field);
 
-        $this->assertSame($this->field, $this->helper->getChildField(MyTablenames::tl_test, $this->table));
+        $this->assertSame($this->field, $this->helper->getChildField($this->table, $this->table));
     }
 
 

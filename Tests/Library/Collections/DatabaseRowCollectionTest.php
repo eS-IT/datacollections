@@ -321,7 +321,7 @@ class DatabaseRowCollectionTest extends TestCase
 
         $this->loadHelper->expects(self::once())
                          ->method('loadChildData')
-                         ->with(MyTablenames::tl_test, $id)
+                         ->with($this->tablename, MyTablenames::tl_test, $id)
                          ->willReturn(null);
 
         $this->convterHelper->expects(self::once())
@@ -353,7 +353,7 @@ class DatabaseRowCollectionTest extends TestCase
 
         $this->loadHelper->expects(self::once())
                          ->method('loadChildData')
-                         ->with(MyTablenames::tl_test, $id)
+                         ->with($this->tablename, MyTablenames::tl_test, $id)
                          ->willReturn($this->arrayCollection);
 
         $this->convterHelper->expects(self::once())

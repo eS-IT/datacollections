@@ -317,13 +317,13 @@ class LazyLoadHelperTest extends TestCase
 
         $this->configHelper->expects(self::once())
                            ->method('getChildField')
-                           ->with(MyTablenames::tl_test, $this->tablename)
+                           ->with($this->tablename, $this->tablename)
                            ->willReturn(null);
 
         $this->loadHelper->expects(self::never())
                          ->method('loadMultipleById');
 
-        $this->assertNull($this->helper->loadChildData(MyTablenames::tl_test, $pid));
+        $this->assertNull($this->helper->loadChildData($this->tablename, MyTablenames::tl_test, $pid));
     }
 
 
@@ -342,7 +342,7 @@ class LazyLoadHelperTest extends TestCase
 
         $this->configHelper->expects(self::once())
                            ->method('getChildField')
-                           ->with(MyTablenames::tl_test, $this->tablename)
+                           ->with($this->tablename, $this->tablename)
                            ->willReturn($this->fieldname);
 
         $this->loadHelper->expects(self::once())
@@ -350,6 +350,7 @@ class LazyLoadHelperTest extends TestCase
                          ->with($this->tablename, $this->fieldname, $pid)
                          ->willReturn($this->arrayCollection);
 
-        $this->assertSame($this->arrayCollection, $this->helper->loadChildData(MyTablenames::tl_test, $pid));
+        $rtn = $this->helper->loadChildData($this->tablename, MyTablenames::tl_test, $pid);
+        $this->assertSame($this->arrayCollection, $rtn);
     }
 }
