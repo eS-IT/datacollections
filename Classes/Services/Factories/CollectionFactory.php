@@ -20,7 +20,7 @@ use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Library\Collections\AbstractCollection;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
-use Esit\Datacollections\Classes\Library\Iterator\CollectionIerrator;
+use Esit\Datacollections\Classes\Library\Iterator\CollectionIterator;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
 use Esit\Valueobjects\Classes\Database\Services\Factories\DatabasenameFactory;
@@ -115,10 +115,10 @@ class CollectionFactory
      *
      * @param AbstractCollection $collection
      *
-     * @return CollectionIerrator
+     * @return CollectionIterator
      */
-    public function createCollectionIterator(AbstractCollection $collection): CollectionIerrator
+    public function createCollectionIterator(AbstractCollection $collection): CollectionIterator
     {
-        return new CollectionIerrator($collection->toArray(), 0, $this->converterHelper);
+        return new CollectionIterator($collection->toArray(), 0, $this->converterHelper);
     }
 }

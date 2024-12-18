@@ -14,7 +14,7 @@ namespace Esit\Datacollections\Tests\Library\Collections;
 
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
-use Esit\Datacollections\Classes\Library\Iterator\CollectionIerrator;
+use Esit\Datacollections\Classes\Library\Iterator\CollectionIterator;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -97,7 +97,7 @@ class ArrayCollectionTest extends TestCase
 
     public function testgetIterator(): void
     {
-        $iterator = $this->getMockBuilder(CollectionIerrator::class)
+        $iterator = $this->getMockBuilder(CollectionIterator::class)
                          ->disableOriginalConstructor()
                          ->getMock();
 

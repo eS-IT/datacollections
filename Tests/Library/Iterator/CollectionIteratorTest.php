@@ -13,12 +13,12 @@ declare(strict_types=1);
 namespace Esit\Datacollections\Tests\Library\Iterator;
 
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
-use Esit\Datacollections\Classes\Library\Iterator\CollectionIerrator;
+use Esit\Datacollections\Classes\Library\Iterator\CollectionIterator;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class CollectionIerratorTest extends TestCase
+class CollectionIteratorTest extends TestCase
 {
 
 
@@ -41,9 +41,9 @@ class CollectionIerratorTest extends TestCase
 
 
     /**
-     * @var CollectionIerrator
+     * @var CollectionIterator
      */
-    private CollectionIerrator $iterator;
+    private CollectionIterator $iterator;
 
 
     protected function setUp(): void
@@ -56,7 +56,7 @@ class CollectionIerratorTest extends TestCase
                                        ->disableOriginalConstructor()
                                        ->getMock();
 
-        $this->iterator         = new CollectionIerrator($this->data, 0, $this->converterHelper);
+        $this->iterator         = new CollectionIterator($this->data, 0, $this->converterHelper);
     }
 
 

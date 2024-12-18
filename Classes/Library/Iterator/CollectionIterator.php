@@ -17,7 +17,7 @@ namespace Esit\Datacollections\Classes\Library\Iterator;
 
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 
-class CollectionIerrator extends \ArrayIterator
+class CollectionIterator extends \ArrayIterator
 {
 
 
