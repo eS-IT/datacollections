@@ -18,6 +18,7 @@ namespace Esit\Datacollections\Classes\Library\Collections;
 use Doctrine\DBAL\Exception;
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
+use Esit\Datacollections\Classes\Services\Helper\ConfigurationHelper;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
 use Esit\Valueobjects\Classes\Database\Valueobjects\FieldnameValue;
@@ -45,6 +46,7 @@ abstract class AbstractDatabaseRowCollection extends AbstractCollection implemen
      * @param SerializeHelper       $serializeHelper
      * @param ConverterHelper       $converterHelper
      * @param LazyLoadHelper        $loadHelper
+     * @param ConfigurationHelper   $configHelper
      * @param TablenameValue        $tablename
      * @param array|ArrayCollection $data
      */
@@ -53,6 +55,7 @@ abstract class AbstractDatabaseRowCollection extends AbstractCollection implemen
         private readonly SerializeHelper $serializeHelper,
         private readonly ConverterHelper $converterHelper,
         private readonly LazyLoadHelper $loadHelper,
+        private readonly ConfigurationHelper $configHelper,
         private readonly TablenameValue $tablename,
         array|ArrayCollection $data = []
     ) {
@@ -89,7 +92,7 @@ abstract class AbstractDatabaseRowCollection extends AbstractCollection implemen
 
         $value = $this->returnValue($keyName);
 
-        if (true === \is_scalar($value)) {
+        if (true === \is_scalar($value) && true === $this->configHelper->isLazyLodingField($this->tablename, $key)) {
             $lazyValue = $this->loadHelper->loadData($this->tablename, $key, $value);
             $this->lazyData->setValue($keyName, $lazyValue);
 

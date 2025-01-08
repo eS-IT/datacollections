@@ -17,6 +17,7 @@ use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Library\Collections\AbstractDatabaseRowCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
+use Esit\Datacollections\Classes\Services\Helper\ConfigurationHelper;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
 use Esit\Datacollections\EsitTestCase;
@@ -74,6 +75,9 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
     private $loadHelper;
 
 
+
+    private $configHelper;
+
     /**
      * @var (TablenameValue&MockObject)|MockObject
      */
@@ -126,6 +130,10 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
                                            ->disableOriginalConstructor()
                                            ->getMock();
 
+        $this->configHelper         = $this->getMockBuilder(ConfigurationHelper::class)
+                                           ->disableOriginalConstructor()
+                                           ->getMock();
+
         $this->tablename            = $this->getMockBuilder(TablenameValue::class)
                                            ->disableOriginalConstructor()
                                            ->getMock();
@@ -142,6 +150,7 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
             $this->serializeHelper,
             $this->convterHelper,
             $this->loadHelper,
+            $this->configHelper,
             $this->tablename
         );
     }
@@ -151,58 +160,29 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
      * @return void
      * @throws \Doctrine\DBAL\Exception
      */
-    public function testGetValueReturnLazyLoadedValueIfSet(): void
+    public function testGetValueFromNameObjectWillReturnLazyLoadedValueIfSet(): void
     {
         $value = 'testvalue';
-
-        $this->lazyData->expects(self::once())
-                       ->method('contains')
-                       ->with($value)
-                       ->willReturn(true);
 
         $this->fieldname->expects(self::once())
                         ->method('value')
                         ->willReturn($value);
 
         $this->lazyData->expects(self::once())
+                       ->method('contains')
+                       ->with($value)
+                       ->willReturn(true);
+
+        $this->lazyData->expects(self::once())
                        ->method('getValue')
                        ->with($value)
                        ->willReturn($value);
 
-        $this->lazyData->expects(self::never())
-                       ->method('setValue');
+        $this->convterHelper->expects(self::never()) // für $this->returnValue()
+                            ->method('convertArrayToCollection');
 
-        $rtn = $this->collection->getValueFromNameObject($this->fieldname);
-        $this->assertSame($value, $rtn);
-    }
-
-
-    /**
-     * @return void
-     * @throws \Doctrine\DBAL\Exception
-     */
-    public function testGetValueWillReturnValueIfItIsNotScalar(): void
-    {
-
-        $key    = 'testkey';
-        $value  = new \StdClass();
-
-        $this->lazyData->expects(self::exactly(2))
-                       ->method('contains')
-                       ->with($key)
-                       ->willReturn(false);
-
-        $this->fieldname->method('value')
-                        ->willReturn($key);
-
-        $this->serializeHelper->method('serialize') // für setValue()
-                              ->willReturn($value);
-
-        $this->convterHelper->method('convertArrayToCollection') // returnValue()
-                            ->willReturn($value);
-
-        $this->lazyData->expects(self::never())
-                       ->method('getValue');
+        $this->configHelper->expects(self::never())
+                           ->method('isLazyLodingField');
 
         $this->loadHelper->expects(self::never())
                          ->method('loadData');
@@ -210,7 +190,45 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
         $this->lazyData->expects(self::never())
                        ->method('setValue');
 
-        $this->collection->setValueWithNameObject($this->fieldname, $value);
+        $rtn = $this->collection->getValueFromNameObject($this->fieldname);
+        $this->assertSame($value, $rtn);
+    }
+
+
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testGetValueFromNameObjectWillReturnValueIfItIsNotALazaLoadingField(): void
+    {
+        $value = 'testvalue';
+
+        $this->fieldname->expects(self::once())
+                        ->method('value')
+                        ->willReturn($value);
+
+        $this->lazyData->expects(self::once())
+                       ->method('contains')
+                       ->with($value)
+                       ->willReturn(false);
+
+        $this->lazyData->expects(self::never())
+                       ->method('getValue');
+
+        $this->convterHelper->expects(self::once()) // für $this->returnValue()
+                            ->method('convertArrayToCollection')
+                            ->willReturn($value);
+
+        $this->configHelper->expects(self::once())
+                           ->method('isLazyLodingField')
+                           ->with($this->tablename, $this->fieldname)
+                           ->willReturn(false);
+
+        $this->loadHelper->expects(self::never())
+                         ->method('loadData');
+
+        $this->lazyData->expects(self::never())
+                       ->method('setValue');
 
         $rtn = $this->collection->getValueFromNameObject($this->fieldname);
         $this->assertSame($value, $rtn);
@@ -221,39 +239,39 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
      * @return void
      * @throws \Doctrine\DBAL\Exception
      */
-    public function testGetValueWillTryToLazyLoadValueIfItIsScalar(): void
+    public function testGetValueFromNameObjectWillReturnNullIfItIsALazyLoadingFieldAndNoDateWereFound(): void
     {
+        $value = 'testvalue';
 
-        $key    = 'testkey';
-        $value  = 'TestValue';
+        $this->fieldname->expects(self::once())
+                        ->method('value')
+                        ->willReturn($value);
 
-        $this->lazyData->expects(self::exactly(2))
+        $this->lazyData->expects(self::once())
                        ->method('contains')
-                       ->with($key)
+                       ->with($value)
                        ->willReturn(false);
-
-        $this->fieldname->method('value')
-                        ->willReturn($key);
-
-        $this->serializeHelper->method('serialize') // für setValue()
-                              ->willReturn($value);
-
-        $this->convterHelper->method('convertArrayToCollection') // returnValue()
-                            ->willReturn($value);
 
         $this->lazyData->expects(self::never())
                        ->method('getValue');
 
+        $this->convterHelper->expects(self::once()) // für $this->returnValue()
+                            ->method('convertArrayToCollection')
+                            ->willReturn($value);
+
+        $this->configHelper->expects(self::once())
+                           ->method('isLazyLodingField')
+                           ->with($this->tablename, $this->fieldname)
+                           ->willReturn(true);
+
         $this->loadHelper->expects(self::once())
                          ->method('loadData')
-                         ->with($this->tablename, $this->fieldname, $value)
+                         ->with($this->tablename, $this->fieldname)
                          ->willReturn(null);
 
         $this->lazyData->expects(self::once())
                        ->method('setValue')
-                       ->with($key, null);
-
-        $this->collection->setValueWithNameObject($this->fieldname, $value);
+                       ->with($value, null);
 
         $rtn = $this->collection->getValueFromNameObject($this->fieldname);
         $this->assertNull($rtn);
@@ -264,46 +282,46 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
      * @return void
      * @throws \Doctrine\DBAL\Exception
      */
-    public function testGetValueWillSetLazyLoadedValueIfItIsFound(): void
+    public function testGetValueFromNameObjectWillReturnLazyDataIfItIsALazyLoadingFieldAndDateWereFound(): void
     {
+        $value = 'testvalue';
 
-        $key    = 'testkey';
-        $value  = 'TestValue';
+        $this->fieldname->expects(self::once())
+                        ->method('value')
+                        ->willReturn($value);
 
-        $this->lazyData->expects(self::exactly(2))
+        $this->lazyData->expects(self::once())
                        ->method('contains')
-                       ->with($key)
+                       ->with($value)
                        ->willReturn(false);
-
-        $this->fieldname->method('value')
-                        ->willReturn($key);
-
-        $this->serializeHelper->method('serialize') // für setValue()
-                              ->willReturn($value);
-
-        $this->convterHelper->method('convertArrayToCollection') // returnValue()
-                            ->willReturn($value);
 
         $this->lazyData->expects(self::never())
                        ->method('getValue');
 
+        $this->convterHelper->expects(self::once()) // für $this->returnValue()
+                            ->method('convertArrayToCollection')
+                            ->willReturn($value);
+
+        $this->configHelper->expects(self::once())
+                           ->method('isLazyLodingField')
+                           ->with($this->tablename, $this->fieldname)
+                           ->willReturn(true);
+
         $this->loadHelper->expects(self::once())
                          ->method('loadData')
-                         ->with($this->tablename, $this->fieldname, $value)
+                         ->with($this->tablename, $this->fieldname)
                          ->willReturn($this->lazyValue);
 
         $this->lazyData->expects(self::once())
                        ->method('setValue')
-                       ->with($key, $this->lazyValue);
-
-        $this->collection->setValueWithNameObject($this->fieldname, $value);
+                       ->with($value, $this->lazyValue);
 
         $rtn = $this->collection->getValueFromNameObject($this->fieldname);
         $this->assertSame($this->lazyValue, $rtn);
     }
 
 
-    public function testSetValueRemoveLazyLoadedValueIsIsSet(): void
+    public function testSetValueWithNameObjectRemoveLazyLoadedValueIsIsSet(): void
     {
         $key    = 'testfield';
         $value  = 'testvalue';

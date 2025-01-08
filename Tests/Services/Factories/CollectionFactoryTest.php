@@ -17,6 +17,7 @@ use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Library\Collections\AbstractDatabaseRowCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
+use Esit\Datacollections\Classes\Services\Helper\ConfigurationHelper;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
 use Esit\Valueobjects\Classes\Database\Services\Factories\DatabasenameFactory;
@@ -56,6 +57,8 @@ class CollectionFactoryTest extends TestCase
      * @var (ArrayCollection&MockObject)|MockObject
      */
     private $arrayCollection;
+
+    private $configHelper;
 
 
     /**
@@ -106,6 +109,10 @@ class CollectionFactoryTest extends TestCase
                                        ->disableOriginalConstructor()
                                        ->getMock();
 
+        $this->configHelper     = $this->getMockBuilder(ConfigurationHelper::class)
+                                       ->disableOriginalConstructor()
+                                       ->getMock();
+
         $this->rowCollection    = $this->getMockBuilder(AbstractDatabaseRowCollection::class)
                                        ->disableOriginalConstructor()
                                        ->getMock();
@@ -115,7 +122,8 @@ class CollectionFactoryTest extends TestCase
             $this->dbHelper,
             $this->serialzeHelper,
             $this->converterHelper,
-            $this->nameFactory
+            $this->nameFactory,
+            $this->configHelper
         );
     }
 

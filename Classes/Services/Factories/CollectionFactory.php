@@ -21,6 +21,7 @@ use Esit\Datacollections\Classes\Library\Collections\AbstractCollection;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
 use Esit\Datacollections\Classes\Library\Iterator\CollectionIterator;
+use Esit\Datacollections\Classes\Services\Helper\ConfigurationHelper;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
 use Esit\Valueobjects\Classes\Database\Services\Factories\DatabasenameFactory;
@@ -42,7 +43,8 @@ class CollectionFactory
         private readonly DatabaseHelper $dbHelper,
         private readonly SerializeHelper $serializeHelper,
         private readonly ConverterHelper $converterHelper,
-        private readonly DatabasenameFactory $nameFactory
+        private readonly DatabasenameFactory $nameFactory,
+        private readonly ConfigurationHelper $configurationHelper
     ) {
         $this->lazyLoadHelper->setCollectionFactory($this);
         $this->converterHelper->setCollectionFactory($this);
@@ -82,6 +84,7 @@ class CollectionFactory
             $this->converterHelper,
             $this->dbHelper,
             $this->lazyLoadHelper,
+            $this->configurationHelper,
             $tablename,
             $data
         );

@@ -17,6 +17,7 @@ use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
+use Esit\Datacollections\Classes\Services\Helper\ConfigurationHelper;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
 use Esit\Valueobjects\Classes\Database\Enums\FieldnamesInterface;
@@ -93,10 +94,7 @@ class DatabaseRowCollectionTest extends TestCase
     private $arrayCollection;
 
 
-    /**
-     * @var (ArrayCollection&MockObject)|MockObject
-     */
-    private $childData;
+    private $configHelper;
 
 
     /**
@@ -143,6 +141,10 @@ class DatabaseRowCollectionTest extends TestCase
                                            ->disableOriginalConstructor()
                                            ->getMock();
 
+        $this->configHelper         = $this->getMockBuilder(ConfigurationHelper::class)
+                                           ->disableOriginalConstructor()
+                                           ->getMock();
+
         $this->collectionFactory->method('createArrayCollection')
                                 ->willReturn($this->arrayCollection);
 
@@ -154,6 +156,7 @@ class DatabaseRowCollectionTest extends TestCase
                                                $this->convterHelper,
                                                $this->databaseHelper,
                                                $this->loadHelper,
+                                               $this->configHelper,
                                                $this->tablename
                                            ])
                                            ->onlyMethods(['getValueFromNameObject', 'setValueWithNameObject'])

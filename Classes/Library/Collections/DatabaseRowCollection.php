@@ -19,6 +19,7 @@ use Doctrine\DBAL\Exception;
 use Esit\Databaselayer\Classes\Services\Helper\DatabaseHelper;
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
+use Esit\Datacollections\Classes\Services\Helper\ConfigurationHelper;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
 use Esit\Datacollections\Classes\Services\Helper\LazyLoadHelper;
 use Esit\Valueobjects\Classes\Database\Enums\FieldnamesInterface;
@@ -56,6 +57,7 @@ class DatabaseRowCollection extends AbstractDatabaseRowCollection
      * @param DatabaseHelper        $databaseHelper
      * @param LazyLoadHelper        $loadHelper
      * @param TablenameValue        $tablename
+     * @param ConfigurationHelper   $configurationHelper
      * @param array|ArrayCollection $data
      */
     public function __construct(
@@ -65,6 +67,7 @@ class DatabaseRowCollection extends AbstractDatabaseRowCollection
         private readonly ConverterHelper $converterHelper,
         private readonly DatabaseHelper $databaseHelper,
         private readonly LazyLoadHelper $loadHelper,
+        private readonly ConfigurationHelper $configurationHelper,
         private readonly TablenameValue $tablename,
         array|ArrayCollection $data = []
     ) {
@@ -73,6 +76,7 @@ class DatabaseRowCollection extends AbstractDatabaseRowCollection
             $this->serializeHelper,
             $this->converterHelper,
             $this->loadHelper,
+            $this->configurationHelper,
             $this->tablename,
             $data
         );
@@ -98,6 +102,7 @@ class DatabaseRowCollection extends AbstractDatabaseRowCollection
             $this->converterHelper,
             $this->databaseHelper,
             $this->loadHelper,
+            $this->configurationHelper,
             $this->tablename,
             $elements
         );
