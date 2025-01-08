@@ -249,13 +249,14 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
                          ->with($this->tablename, $this->fieldname, $value)
                          ->willReturn(null);
 
-        $this->lazyData->expects(self::never())
-                       ->method('setValue');
+        $this->lazyData->expects(self::once())
+                       ->method('setValue')
+                       ->with($key, null);
 
         $this->collection->setValueWithNameObject($this->fieldname, $value);
 
         $rtn = $this->collection->getValueFromNameObject($this->fieldname);
-        $this->assertSame($value, $rtn);
+        $this->assertNull($rtn);
     }
 
 

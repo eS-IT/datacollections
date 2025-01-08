@@ -91,12 +91,9 @@ abstract class AbstractDatabaseRowCollection extends AbstractCollection implemen
 
         if (true === \is_scalar($value)) {
             $lazyValue = $this->loadHelper->loadData($this->tablename, $key, $value);
+            $this->lazyData->setValue($keyName, $lazyValue);
 
-            if (null !== $lazyValue) {
-                $this->lazyData->setValue($keyName, $lazyValue);
-
-                return $lazyValue;
-            }
+            return $lazyValue; // Wenn keine Daten gefunden werden null, statt des skalaren Werts zurückgeben.
         }
 
         return $value;
