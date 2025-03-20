@@ -17,6 +17,7 @@ namespace Esit\Datacollections\Classes\Services\Factories;
 
 use Esit\Databaselayer\Classes\Services\Helper\DatabaseHelper;
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
+use Esit\Datacollections\Classes\Library\Cache\LazyLoadCache;
 use Esit\Datacollections\Classes\Library\Collections\AbstractCollection;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
@@ -38,7 +39,6 @@ class CollectionFactory
      * @param ConverterHelper     $converterHelper
      * @param DatabasenameFactory $nameFactory
      * @param ConfigurationHelper $configurationHelper
-     * @param CacheFactory        $cacheFactory
      */
     public function __construct(
         private readonly LazyLoadHelper $lazyLoadHelper,
@@ -47,10 +47,22 @@ class CollectionFactory
         private readonly ConverterHelper $converterHelper,
         private readonly DatabasenameFactory $nameFactory,
         private readonly ConfigurationHelper $configurationHelper,
-        private readonly CacheFactory $cacheFactory
     ) {
         $this->lazyLoadHelper->setCollectionFactory($this);
         $this->converterHelper->setCollectionFactory($this);
+    }
+
+
+    /**
+     * Gibt eine Instanz des LazyLoadCaches zurück.
+     *
+     * @return LazyLoadCache
+     */
+    public function getLazyLoadCache(): LazyLoadCache
+    {
+        $collection = $this->createArrayCollection();
+
+        return LazyLoadCache::getInstance($collection);
     }
 
 
@@ -88,7 +100,7 @@ class CollectionFactory
             $this->dbHelper,
             $this->lazyLoadHelper,
             $this->configurationHelper,
-            $this->cacheFactory->getLazyLoadCache(),
+            $this->getLazyLoadCache(),
             $tablename,
             $data
         );

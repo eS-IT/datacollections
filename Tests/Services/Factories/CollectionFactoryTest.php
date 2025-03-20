@@ -75,12 +75,6 @@ class CollectionFactoryTest extends TestCase
     private $nameFactory;
 
 
-    /**
-     * @var (CacheFactory&MockObject)|MockObject
-     */
-    private $cacheFactory;
-
-
     private $cache;
 
 
@@ -128,10 +122,6 @@ class CollectionFactoryTest extends TestCase
                                        ->disableOriginalConstructor()
                                        ->getMock();
 
-        $this->cacheFactory     = $this->getMockBuilder(CacheFactory::class)
-                                       ->disableOriginalConstructor()
-                                       ->getMock();
-
         $this->cache            = $this->getMockBuilder(LazyLoadCache::class)
                                        ->disableOriginalConstructor()
                                        ->getMock();
@@ -142,10 +132,16 @@ class CollectionFactoryTest extends TestCase
             $this->serialzeHelper,
             $this->converterHelper,
             $this->nameFactory,
-            $this->configHelper,
-            $this->cacheFactory
+            $this->configHelper
         );
     }
+
+
+    public function testGetLazyLoadCache(): void
+    {
+        $this->assertNotNull($this->factory->getLazyLoadCache());
+    }
+
 
     public function testCreateArrayCollection(): void
     {
@@ -158,11 +154,6 @@ class CollectionFactoryTest extends TestCase
     public function testCreateDatabaseRowCollection(): void
     {
         $data   = ['demo1' => 'test', 'data1' => 'Daten'];
-
-        $this->cacheFactory->expects($this->once())
-                           ->method('getLazyLoadCache')
-                           ->willReturn($this->cache);
-
         $rtn    = $this->factory->createDatabaseRowCollection($this->tablename, $data);
 
         $this->assertSame(2, $rtn->count());
@@ -174,10 +165,6 @@ class CollectionFactoryTest extends TestCase
             ['demo1' => 'test', 'data1' => 'Daten'],
             ['demo2' => 'test', 'data2' => 'Daten'],
         ];
-
-        $this->cacheFactory->expects($this->exactly(\count($data)))
-                           ->method('getLazyLoadCache')
-                           ->willReturn($this->cache);
 
         $rtn = $this->factory->createMultiDatabaseRowCollection($this->tablename, $data);
 
