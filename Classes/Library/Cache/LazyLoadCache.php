@@ -119,10 +119,12 @@ class LazyLoadCache
      * @param TablenameValue $table
      * @param FieldnameValue $name
      *
-     * @return ArrayCollection|null
+     * @return AbstractDatabaseRowCollection|ArrayCollection|null
      */
-    public function getValue(TablenameValue $table, FieldnameValue $name): ?ArrayCollection
-    {
+    public function getValue(
+        TablenameValue $table,
+        FieldnameValue $name
+    ): AbstractDatabaseRowCollection|ArrayCollection|null {
         return $this->collection->getValue($table->value() . '_' . $name->value());
     }
 }
