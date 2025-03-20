@@ -14,6 +14,7 @@ namespace Esit\Datacollections\Tests\Library\Collections;
 
 use Esit\Databaselayer\Classes\Services\Helper\DatabaseHelper;
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
+use Esit\Datacollections\Classes\Library\Cache\LazyLoadCache;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Library\Collections\DatabaseRowCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
@@ -94,7 +95,16 @@ class DatabaseRowCollectionTest extends TestCase
     private $arrayCollection;
 
 
+    /**
+     * @var (ConfigurationHelper&MockObject)|MockObject
+     */
     private $configHelper;
+
+
+    /**
+     * @var (LazyLoadCache&MockObject)|MockObject
+     */
+    private $cache;
 
 
     /**
@@ -145,6 +155,10 @@ class DatabaseRowCollectionTest extends TestCase
                                            ->disableOriginalConstructor()
                                            ->getMock();
 
+        $this->cache                = $this->getMockBuilder(LazyLoadCache::class)
+                                           ->disableOriginalConstructor()
+                                           ->getMock();
+
         $this->collectionFactory->method('createArrayCollection')
                                 ->willReturn($this->arrayCollection);
 
@@ -157,6 +171,7 @@ class DatabaseRowCollectionTest extends TestCase
                                                $this->databaseHelper,
                                                $this->loadHelper,
                                                $this->configHelper,
+                                               $this->cache,
                                                $this->tablename
                                            ])
                                            ->onlyMethods(['getValueFromNameObject', 'setValueWithNameObject'])

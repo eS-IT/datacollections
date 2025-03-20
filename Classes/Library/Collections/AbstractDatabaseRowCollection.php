@@ -17,6 +17,7 @@ namespace Esit\Datacollections\Classes\Library\Collections;
 
 use Doctrine\DBAL\Exception;
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
+use Esit\Datacollections\Classes\Library\Cache\LazyLoadCache;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\ConfigurationHelper;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
@@ -35,18 +36,12 @@ abstract class AbstractDatabaseRowCollection extends AbstractCollection implemen
 
 
     /**
-     * Map für die nachgeladenen Daten.
-     *
-     * @var ArrayCollection
-     */
-    protected ArrayCollection $lazyData;
-
-    /**
      * @param CollectionFactory     $collectionFactory
      * @param SerializeHelper       $serializeHelper
      * @param ConverterHelper       $converterHelper
      * @param LazyLoadHelper        $loadHelper
      * @param ConfigurationHelper   $configHelper
+     * @param LazyLoadCache         $cache
      * @param TablenameValue        $tablename
      * @param array|ArrayCollection $data
      */
@@ -56,18 +51,18 @@ abstract class AbstractDatabaseRowCollection extends AbstractCollection implemen
         private readonly ConverterHelper $converterHelper,
         private readonly LazyLoadHelper $loadHelper,
         private readonly ConfigurationHelper $configHelper,
+        private readonly LazyLoadCache $cache,
         private readonly TablenameValue $tablename,
         array|ArrayCollection $data = []
     ) {
         $data = $data instanceof ArrayCollection ? $data->toArray() : $data;
+
         parent::__construct(
             $this->collectionFactory,
             $this->serializeHelper,
             $this->converterHelper,
             $data
         );
-
-        $this->lazyData = $this->collectionFactory->createArrayCollection();
     }
 
 
@@ -84,17 +79,15 @@ abstract class AbstractDatabaseRowCollection extends AbstractCollection implemen
      */
     public function getValueFromNameObject(FieldnameValue $key): mixed
     {
-        $keyName = $key->value();
-
-        if (true === $this->lazyData->contains($keyName)) {
-            return $this->lazyData->getValue($keyName);
+        if (true === $this->cache->contains($this->tablename, $key)) {
+            return $this->cache->getValue($this->tablename, $key);
         }
 
-        $value = $this->returnValue($keyName);
+        $value = $this->returnValue($key->value());
 
         if (true === \is_scalar($value) && true === $this->configHelper->isLazyLodingField($this->tablename, $key)) {
             $lazyValue = $this->loadHelper->loadData($this->tablename, $key, $value);
-            $this->lazyData->setValue($keyName, $lazyValue);
+            $this->cache->setValue($this->tablename, $key, $lazyValue);
 
             return $lazyValue; // Wenn keine Daten gefunden werden null, statt des skalaren Werts zurückgeben.
         }
@@ -115,9 +108,9 @@ abstract class AbstractDatabaseRowCollection extends AbstractCollection implemen
     {
         $value = $value instanceof ArrayCollection ? $value->toArray() : $value;
 
-        if (true === $this->lazyData->contains($key->value())) {
+        if (true === $this->cache->contains($this->tablename, $key)) {
             // Nachgeladene Daten entfernen, wenn der Wert neu gesetzt wird!
-            $this->lazyData->remove($key->value());
+            $this->cache->remove($this->tablename, $key);
         }
 
         $this->handleValue($key->value(), $value);

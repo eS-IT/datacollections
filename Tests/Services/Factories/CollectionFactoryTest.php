@@ -14,8 +14,10 @@ namespace Esit\Datacollections\Tests\Services\Factories;
 
 use Esit\Databaselayer\Classes\Services\Helper\DatabaseHelper;
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
+use Esit\Datacollections\Classes\Library\Cache\LazyLoadCache;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Library\Collections\AbstractDatabaseRowCollection;
+use Esit\Datacollections\Classes\Services\Factories\CacheFactory;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\ConfigurationHelper;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
@@ -74,6 +76,15 @@ class CollectionFactoryTest extends TestCase
 
 
     /**
+     * @var (CacheFactory&MockObject)|MockObject
+     */
+    private $cacheFactory;
+
+
+    private $cache;
+
+
+    /**
      * @var CollectionFactory
      */
     private CollectionFactory $factory;
@@ -117,13 +128,22 @@ class CollectionFactoryTest extends TestCase
                                        ->disableOriginalConstructor()
                                        ->getMock();
 
+        $this->cacheFactory     = $this->getMockBuilder(CacheFactory::class)
+                                       ->disableOriginalConstructor()
+                                       ->getMock();
+
+        $this->cache            = $this->getMockBuilder(LazyLoadCache::class)
+                                       ->disableOriginalConstructor()
+                                       ->getMock();
+
         $this->factory          = new CollectionFactory(
             $this->lazyLoadHelper,
             $this->dbHelper,
             $this->serialzeHelper,
             $this->converterHelper,
             $this->nameFactory,
-            $this->configHelper
+            $this->configHelper,
+            $this->cacheFactory
         );
     }
 
@@ -138,6 +158,11 @@ class CollectionFactoryTest extends TestCase
     public function testCreateDatabaseRowCollection(): void
     {
         $data   = ['demo1' => 'test', 'data1' => 'Daten'];
+
+        $this->cacheFactory->expects($this->once())
+                           ->method('getLazyLoadCache')
+                           ->willReturn($this->cache);
+
         $rtn    = $this->factory->createDatabaseRowCollection($this->tablename, $data);
 
         $this->assertSame(2, $rtn->count());
@@ -149,6 +174,10 @@ class CollectionFactoryTest extends TestCase
             ['demo1' => 'test', 'data1' => 'Daten'],
             ['demo2' => 'test', 'data2' => 'Daten'],
         ];
+
+        $this->cacheFactory->expects($this->exactly(\count($data)))
+                           ->method('getLazyLoadCache')
+                           ->willReturn($this->cache);
 
         $rtn = $this->factory->createMultiDatabaseRowCollection($this->tablename, $data);
 

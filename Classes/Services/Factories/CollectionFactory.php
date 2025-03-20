@@ -37,6 +37,8 @@ class CollectionFactory
      * @param SerializeHelper     $serializeHelper
      * @param ConverterHelper     $converterHelper
      * @param DatabasenameFactory $nameFactory
+     * @param ConfigurationHelper $configurationHelper
+     * @param CacheFactory        $cacheFactory
      */
     public function __construct(
         private readonly LazyLoadHelper $lazyLoadHelper,
@@ -44,7 +46,8 @@ class CollectionFactory
         private readonly SerializeHelper $serializeHelper,
         private readonly ConverterHelper $converterHelper,
         private readonly DatabasenameFactory $nameFactory,
-        private readonly ConfigurationHelper $configurationHelper
+        private readonly ConfigurationHelper $configurationHelper,
+        private readonly CacheFactory $cacheFactory
     ) {
         $this->lazyLoadHelper->setCollectionFactory($this);
         $this->converterHelper->setCollectionFactory($this);
@@ -85,6 +88,7 @@ class CollectionFactory
             $this->dbHelper,
             $this->lazyLoadHelper,
             $this->configurationHelper,
+            $this->cacheFactory->getLazyLoadCache(),
             $tablename,
             $data
         );

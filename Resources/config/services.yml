@@ -5,6 +5,8 @@ services:
         autoconfigure: true
 
     # Factories
+    Esit\Datacollections\Classes\Services\Factories\CacheFactory: ~
+
     Esit\Datacollections\Classes\Services\Factories\CollectionFactory:
         public: true
 

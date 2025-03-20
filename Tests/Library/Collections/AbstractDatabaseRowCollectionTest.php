@@ -14,6 +14,7 @@ namespace Esit\Datacollections\Tests\Library\Collections;
 
 use Esit\Databaselayer\Classes\Services\Helper\DatabaseHelper;
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
+use Esit\Datacollections\Classes\Library\Cache\LazyLoadCache;
 use Esit\Datacollections\Classes\Library\Collections\ArrayCollection;
 use Esit\Datacollections\Classes\Library\Collections\AbstractDatabaseRowCollection;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
@@ -75,8 +76,16 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
     private $loadHelper;
 
 
-
+    /**
+     * @var (ConfigurationHelper&MockObject)|MockObject
+     */
     private $configHelper;
+
+
+    /**
+     * @var (LazyLoadCache&MockObject)|MockObject
+     */
+    private $cache;
 
     /**
      * @var (TablenameValue&MockObject)|MockObject
@@ -134,6 +143,10 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
                                            ->disableOriginalConstructor()
                                            ->getMock();
 
+        $this->cache                = $this->getMockBuilder(LazyLoadCache::class)
+                                           ->disableOriginalConstructor()
+                                           ->getMock();
+
         $this->tablename            = $this->getMockBuilder(TablenameValue::class)
                                            ->disableOriginalConstructor()
                                            ->getMock();
@@ -151,6 +164,7 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
             $this->convterHelper,
             $this->loadHelper,
             $this->configHelper,
+            $this->cache,
             $this->tablename
         );
     }
@@ -162,21 +176,15 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
      */
     public function testGetValueFromNameObjectWillReturnLazyLoadedValueIfSet(): void
     {
-        $value = 'testvalue';
-
-        $this->fieldname->expects(self::once())
-                        ->method('value')
-                        ->willReturn($value);
-
-        $this->lazyData->expects(self::once())
+        $this->cache->expects(self::once())
                        ->method('contains')
-                       ->with($value)
+                       ->with($this->tablename, $this->fieldname)
                        ->willReturn(true);
 
-        $this->lazyData->expects(self::once())
+        $this->cache->expects(self::once())
                        ->method('getValue')
-                       ->with($value)
-                       ->willReturn($value);
+                       ->with($this->tablename, $this->fieldname)
+                       ->willReturn($this->lazyData);
 
         $this->convterHelper->expects(self::never()) // für $this->returnValue()
                             ->method('convertArrayToCollection');
@@ -187,11 +195,11 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
         $this->loadHelper->expects(self::never())
                          ->method('loadData');
 
-        $this->lazyData->expects(self::never())
+        $this->cache->expects(self::never())
                        ->method('setValue');
 
         $rtn = $this->collection->getValueFromNameObject($this->fieldname);
-        $this->assertSame($value, $rtn);
+        $this->assertSame($this->lazyData, $rtn);
     }
 
 
@@ -203,16 +211,12 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
     {
         $value = 'testvalue';
 
-        $this->fieldname->expects(self::once())
-                        ->method('value')
-                        ->willReturn($value);
-
-        $this->lazyData->expects(self::once())
+        $this->cache->expects(self::once())
                        ->method('contains')
-                       ->with($value)
+                       ->with($this->tablename, $this->fieldname)
                        ->willReturn(false);
 
-        $this->lazyData->expects(self::never())
+        $this->cache->expects(self::never())
                        ->method('getValue');
 
         $this->convterHelper->expects(self::once()) // für $this->returnValue()
@@ -227,7 +231,7 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
         $this->loadHelper->expects(self::never())
                          ->method('loadData');
 
-        $this->lazyData->expects(self::never())
+        $this->cache->expects(self::never())
                        ->method('setValue');
 
         $rtn = $this->collection->getValueFromNameObject($this->fieldname);
@@ -243,16 +247,12 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
     {
         $value = 'testvalue';
 
-        $this->fieldname->expects(self::once())
-                        ->method('value')
-                        ->willReturn($value);
-
-        $this->lazyData->expects(self::once())
+        $this->cache->expects(self::once())
                        ->method('contains')
-                       ->with($value)
+                       ->with($this->tablename, $this->fieldname)
                        ->willReturn(false);
 
-        $this->lazyData->expects(self::never())
+        $this->cache->expects(self::never())
                        ->method('getValue');
 
         $this->convterHelper->expects(self::once()) // für $this->returnValue()
@@ -269,9 +269,9 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
                          ->with($this->tablename, $this->fieldname)
                          ->willReturn(null);
 
-        $this->lazyData->expects(self::once())
+        $this->cache->expects(self::once())
                        ->method('setValue')
-                       ->with($value, null);
+                       ->with($this->tablename, $this->fieldname, null);
 
         $rtn = $this->collection->getValueFromNameObject($this->fieldname);
         $this->assertNull($rtn);
@@ -286,16 +286,12 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
     {
         $value = 'testvalue';
 
-        $this->fieldname->expects(self::once())
-                        ->method('value')
-                        ->willReturn($value);
-
-        $this->lazyData->expects(self::once())
+        $this->cache->expects(self::once())
                        ->method('contains')
-                       ->with($value)
+                       ->with($this->tablename, $this->fieldname)
                        ->willReturn(false);
 
-        $this->lazyData->expects(self::never())
+        $this->cache->expects(self::never())
                        ->method('getValue');
 
         $this->convterHelper->expects(self::once()) // für $this->returnValue()
@@ -312,9 +308,9 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
                          ->with($this->tablename, $this->fieldname)
                          ->willReturn($this->lazyValue);
 
-        $this->lazyData->expects(self::once())
+        $this->cache->expects(self::once())
                        ->method('setValue')
-                       ->with($value, $this->lazyValue);
+                       ->with($this->tablename, $this->fieldname, $this->lazyValue);
 
         $rtn = $this->collection->getValueFromNameObject($this->fieldname);
         $this->assertSame($this->lazyValue, $rtn);
@@ -323,21 +319,16 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
 
     public function testSetValueWithNameObjectRemoveLazyLoadedValueIsIsSet(): void
     {
-        $key    = 'testfield';
         $value  = 'testvalue';
 
-        $this->fieldname->expects(self::exactly(3))
-                        ->method('value')
-                        ->willReturn($key);
-
-        $this->lazyData->expects(self::once())
+        $this->cache->expects(self::once())
                        ->method('contains')
-                       ->with($key)
+                       ->with($this->tablename, $this->fieldname)
                        ->willReturn(true);
 
-        $this->lazyData->expects(self::once())
+        $this->cache->expects(self::once())
                        ->method('remove')
-                       ->with($key);
+                       ->with($this->tablename, $this->fieldname);
 
         $this->collection->setValueWithNameObject($this->fieldname, $value);
     }
@@ -345,19 +336,14 @@ class AbstractDatabaseRowCollectionTest extends EsitTestCase
 
     public function testSetValueWithNameObjectReturnValue(): void
     {
-        $key    = 'testfield';
         $value  = 'testvalue';
 
-        $this->fieldname->expects(self::exactly(2))
-                        ->method('value')
-                        ->willReturn($key);
-
-        $this->lazyData->expects(self::once())
+        $this->cache->expects(self::once())
                        ->method('contains')
-                       ->with($key)
+                       ->with($this->tablename, $this->fieldname)
                        ->willReturn(false);
 
-        $this->lazyData->expects(self::never())
+        $this->cache->expects(self::never())
                        ->method('remove');
 
         $this->collection->setValueWithNameObject($this->fieldname, $value);

@@ -18,6 +18,7 @@ namespace Esit\Datacollections\Classes\Library\Collections;
 use Doctrine\DBAL\Exception;
 use Esit\Databaselayer\Classes\Services\Helper\DatabaseHelper;
 use Esit\Databaselayer\Classes\Services\Helper\SerializeHelper;
+use Esit\Datacollections\Classes\Library\Cache\LazyLoadCache;
 use Esit\Datacollections\Classes\Services\Factories\CollectionFactory;
 use Esit\Datacollections\Classes\Services\Helper\ConfigurationHelper;
 use Esit\Datacollections\Classes\Services\Helper\ConverterHelper;
@@ -56,8 +57,9 @@ class DatabaseRowCollection extends AbstractDatabaseRowCollection
      * @param ConverterHelper       $converterHelper
      * @param DatabaseHelper        $databaseHelper
      * @param LazyLoadHelper        $loadHelper
-     * @param TablenameValue        $tablename
      * @param ConfigurationHelper   $configurationHelper
+     * @param LazyLoadCache         $lazyLoadCache
+     * @param TablenameValue        $tablename
      * @param array|ArrayCollection $data
      */
     public function __construct(
@@ -68,6 +70,7 @@ class DatabaseRowCollection extends AbstractDatabaseRowCollection
         private readonly DatabaseHelper $databaseHelper,
         private readonly LazyLoadHelper $loadHelper,
         private readonly ConfigurationHelper $configurationHelper,
+        private readonly LazyLoadCache $lazyLoadCache,
         private readonly TablenameValue $tablename,
         array|ArrayCollection $data = []
     ) {
@@ -77,6 +80,7 @@ class DatabaseRowCollection extends AbstractDatabaseRowCollection
             $this->converterHelper,
             $this->loadHelper,
             $this->configurationHelper,
+            $this->lazyLoadCache,
             $this->tablename,
             $data
         );
@@ -103,6 +107,7 @@ class DatabaseRowCollection extends AbstractDatabaseRowCollection
             $this->databaseHelper,
             $this->loadHelper,
             $this->configurationHelper,
+            $this->lazyLoadCache,
             $this->tablename,
             $elements
         );
