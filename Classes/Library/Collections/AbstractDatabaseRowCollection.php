@@ -91,7 +91,7 @@ abstract class AbstractDatabaseRowCollection extends AbstractCollection implemen
             $lazyValue = $this->loadHelper->loadData($this->tablename, $key, $value);
 
             if (null !== $id) {
-                $this->cache->setValue($this->tablename, $key, $id, $lazyValue);#
+                $this->cache->setValue($this->tablename, $key, $id, $lazyValue);
             }
 
             return $lazyValue; // Wenn keine Daten gefunden werden null, statt des skalaren Werts zurückgeben.
