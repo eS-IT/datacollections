@@ -79,15 +79,17 @@ abstract class AbstractDatabaseRowCollection extends AbstractCollection implemen
      */
     public function getValueFromNameObject(FieldnameValue $key): mixed
     {
-        if (true === $this->cache->contains($this->tablename, $key)) {
-            return $this->cache->getValue($this->tablename, $key);
+        $id = $this->returnValue('id') ?: null;
+
+        if (null !== $id && true === $this->cache->contains($this->tablename, $key, $id)) {
+            return $this->cache->getValue($this->tablename, $key, $id);
         }
 
         $value = $this->returnValue($key->value());
 
         if (true === \is_scalar($value) && true === $this->configHelper->isLazyLodingField($this->tablename, $key)) {
             $lazyValue = $this->loadHelper->loadData($this->tablename, $key, $value);
-            $this->cache->setValue($this->tablename, $key, $lazyValue);
+            $this->cache->setValue($this->tablename, $key, $id, $lazyValue);
 
             return $lazyValue; // Wenn keine Daten gefunden werden null, statt des skalaren Werts zurückgeben.
         }
@@ -106,11 +108,12 @@ abstract class AbstractDatabaseRowCollection extends AbstractCollection implemen
      */
     public function setValueWithNameObject(FieldnameValue $key, mixed $value): void
     {
-        $value = $value instanceof ArrayCollection ? $value->toArray() : $value;
+        $id     = $this->returnValue('id') ?: null;
+        $value  = $value instanceof ArrayCollection ? $value->toArray() : $value;
 
-        if (true === $this->cache->contains($this->tablename, $key)) {
+        if (null !== $id && true === $this->cache->contains($this->tablename, $key, $id)) {
             // Nachgeladene Daten entfernen, wenn der Wert neu gesetzt wird!
-            $this->cache->remove($this->tablename, $key);
+            $this->cache->remove($this->tablename, $key, $id);
         }
 
         $this->handleValue($key->value(), $value);

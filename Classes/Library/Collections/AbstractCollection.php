@@ -131,8 +131,6 @@ abstract class AbstractCollection extends ArrayCollection
 
     /**
      * Gibt einen Wert zurück.
-     * Ist $convertToArray true, wird ein serialisertes Array direkt in eine
-     * ArrayCollection umgewandelt.
      *
      * @param mixed $key
      *

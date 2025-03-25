@@ -55,7 +55,7 @@ class LazyLoadCache
      *
      * @param ArrayCollection $collection
      *
-     * @return LazyLoadCache
+     * @return self
      */
     public static function getInstance(ArrayCollection $collection): self
     {
@@ -72,12 +72,13 @@ class LazyLoadCache
      *
      * @param TablenameValue $table
      * @param FieldnameValue $name
+     * @param int            $id
      *
      * @return bool
      */
-    public function contains(TablenameValue $table, FieldnameValue $name): bool
+    public function contains(TablenameValue $table, FieldnameValue $name, int $id): bool
     {
-        return !empty($this->collection->getValue($table->value() . '_' . $name->value()));
+        return !empty($this->collection->getValue($table->value() . '_' . $name->value() . '_' . $id));
     }
 
 
@@ -86,12 +87,13 @@ class LazyLoadCache
      *
      * @param TablenameValue $table
      * @param FieldnameValue $name
+     * @param int            $id
      *
      * @return void
      */
-    public function remove(TablenameValue $table, FieldnameValue $name): void
+    public function remove(TablenameValue $table, FieldnameValue $name, int $id): void
     {
-        $this->collection->remove($table->value() . '_' . $name->value());
+        $this->collection->remove($table->value() . '_' . $name->value() . '_' . $id);
     }
 
 
@@ -100,6 +102,7 @@ class LazyLoadCache
      *
      * @param TablenameValue                                     $table
      * @param FieldnameValue                                     $name
+     * @param int                                                $id
      * @param AbstractDatabaseRowCollection|ArrayCollection|null $row
      *
      * @return void
@@ -107,9 +110,10 @@ class LazyLoadCache
     public function setValue(
         TablenameValue $table,
         FieldnameValue $name,
+        int $id,
         AbstractDatabaseRowCollection|ArrayCollection|null $row
     ): void {
-        $this->collection->setValue($table->value() . '_' . $name->value(), $row);
+        $this->collection->setValue($table->value() . '_' . $name->value() . '_' . $id, $row);
     }
 
 
@@ -118,13 +122,15 @@ class LazyLoadCache
      *
      * @param TablenameValue $table
      * @param FieldnameValue $name
+     * @param int            $id
      *
      * @return AbstractDatabaseRowCollection|ArrayCollection|null
      */
     public function getValue(
         TablenameValue $table,
-        FieldnameValue $name
+        FieldnameValue $name,
+        int $id,
     ): AbstractDatabaseRowCollection|ArrayCollection|null {
-        return $this->collection->getValue($table->value() . '_' . $name->value());
+        return $this->collection->getValue($table->value() . '_' . $name->value() . '_' . $id);
     }
 }

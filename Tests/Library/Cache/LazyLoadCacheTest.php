@@ -83,9 +83,10 @@ class LazyLoadCacheTest extends TestCase
 
     public function testContainsReturnFalseIfNoValueIsFound(): void
     {
+        $id         = 12;
         $tablename  = 'tl_test';
         $fieldname  = 'testfield';
-        $name       = $tablename. '_' . $fieldname;
+        $name       = $tablename. '_' . $fieldname . '_' . $id;
 
         $this->tablename->expects($this->once())
                         ->method('value')
@@ -100,16 +101,17 @@ class LazyLoadCacheTest extends TestCase
                          ->with($name)
                          ->willReturn(null);
 
-        $this->assertFalse($this->cache->contains($this->tablename, $this->fieldname));
+        $this->assertFalse($this->cache->contains($this->tablename, $this->fieldname, $id));
     }
 
 
     public function testContainsReturnTrueIfValueIsFound(): void
     {
+        $id         = 12;
         $value      = ['data'];
         $tablename  = 'tl_test';
         $fieldname  = 'testfield';
-        $name       = $tablename. '_' . $fieldname;
+        $name       = $tablename. '_' . $fieldname . '_' . $id;
 
         $this->tablename->expects($this->once())
                         ->method('value')
@@ -124,15 +126,16 @@ class LazyLoadCacheTest extends TestCase
                          ->with($name)
                          ->willReturn($value);
 
-        $this->assertTrue($this->cache->contains($this->tablename, $this->fieldname));
+        $this->assertTrue($this->cache->contains($this->tablename, $this->fieldname, $id));
     }
 
 
     public function testRemove(): void
     {
+        $id         = 12;
         $tablename  = 'tl_test';
         $fieldname  = 'testfield';
-        $name       = $tablename. '_' . $fieldname;
+        $name       = $tablename. '_' . $fieldname . '_' . $id;
 
         $this->tablename->expects($this->once())
                         ->method('value')
@@ -146,15 +149,16 @@ class LazyLoadCacheTest extends TestCase
                          ->method('remove')
                          ->with($name);
 
-        $this->cache->remove($this->tablename, $this->fieldname);
+        $this->cache->remove($this->tablename, $this->fieldname, $id);
     }
 
 
     public function testSetValue(): void
     {
+        $id         = 12;
         $tablename  = 'tl_test';
         $fieldname  = 'testfield';
-        $name       = $tablename. '_' . $fieldname;
+        $name       = $tablename. '_' . $fieldname . '_' . $id;
 
         $this->tablename->expects($this->once())
                         ->method('value')
@@ -168,15 +172,16 @@ class LazyLoadCacheTest extends TestCase
                          ->method('setValue')
                          ->with($name, $this->row);
 
-        $this->cache->setValue($this->tablename, $this->fieldname, $this->row);
+        $this->cache->setValue($this->tablename, $this->fieldname, $id, $this->row);
     }
 
 
     public function testGetValue(): void
     {
+        $id         = 12;
         $tablename  = 'tl_test';
         $fieldname  = 'testfield';
-        $name       = $tablename. '_' . $fieldname;
+        $name       = $tablename. '_' . $fieldname . '_' . $id;
 
         $this->tablename->expects($this->once())
                         ->method('value')
@@ -191,6 +196,6 @@ class LazyLoadCacheTest extends TestCase
                          ->with($name)
                          ->willReturn($this->row);
 
-        $this->assertSame($this->row, $this->cache->getValue($this->tablename, $this->fieldname));
+        $this->assertSame($this->row, $this->cache->getValue($this->tablename, $this->fieldname, $id));
     }
 }
